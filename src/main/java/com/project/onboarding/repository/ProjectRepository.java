@@ -13,5 +13,5 @@ import com.project.onboarding.model.Project;
 
 @Repository
 public interface ProjectRepository extends MongoRepository<Project, Integer>{
-
+	Project findByProjectId(String projectId);
 }

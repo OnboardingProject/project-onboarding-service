@@ -2,6 +2,8 @@ package com.project.onboarding.model;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Transient;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {
-	private String id;
+	@Transient
+    public static final String SEQUENCE_NAME = "Task_Sequence";
+	
+	private String taskId;
 	private String name;
 	private String description;
 	private List<String> designation;
