@@ -1,5 +1,6 @@
 package com.project.onboarding.controller;
 
+import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Types;
 import com.project.onboarding.service.ProjectOnboardingService;
@@ -40,7 +41,7 @@ public class ProjectOnboardingController {
 
 		catch (ProjectOnboardingException projectOnboardingException) {
 			log.error("The list is empty then throw exception");
-			return new ResponseEntity<String>("Empty List of status", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<String>(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND);
 		}
 	}
 
