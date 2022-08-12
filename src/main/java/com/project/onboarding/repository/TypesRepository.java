@@ -1,5 +1,7 @@
 package com.project.onboarding.repository;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,6 @@ import com.project.onboarding.model.Types;
 
 @Repository
 public interface TypesRepository extends MongoRepository<Types, String>{
-
+	
+	public List<Types> findByTypeName(String typeName);
 }

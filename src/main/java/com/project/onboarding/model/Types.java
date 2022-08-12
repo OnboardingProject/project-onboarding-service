@@ -19,10 +19,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document("Types")
 public class Types {
 	private String typeName;
-	private String id;
+	private String typeId;
     private String desc;
     private List<String> permission;
 }
