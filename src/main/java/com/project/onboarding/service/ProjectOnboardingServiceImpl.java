@@ -20,7 +20,7 @@ public class ProjectOnboardingServiceImpl implements ProjectOnboardingService {
 	@Autowired
 	TypesRepository typesRepository;
 
-	private static Logger log = LoggerFactory.getLogger(ProjectOnboardingService.class);
+	private static final Logger logger  = LoggerFactory.getLogger(ProjectOnboardingServiceImpl.class);
 
 	/**
 	 * @param
@@ -29,15 +29,15 @@ public class ProjectOnboardingServiceImpl implements ProjectOnboardingService {
 	 * @description Fetch all task status
 	 */
 	public List<Types> getAllTaskStatus() {
-		log.info("Staring of fetch all tst status");
+		logger.info("Staring of fetch all tst status");
 		List<Types> taskStatusList = new ArrayList<Types>();
 		taskStatusList = typesRepository.findByTypeName(ProjectOnboardingConstant.TYPE_NAME);
 
 		if (taskStatusList.isEmpty() == false) {
-			log.info("Display all the task status");
+			logger.info("Display all the task status");
 			return taskStatusList;
 		} else {
-			log.error("The tak list is empty");
+			logger.error("The task list is empty");
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND);
 		}
 	}

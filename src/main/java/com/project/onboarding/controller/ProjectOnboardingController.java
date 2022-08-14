@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/fetchtaskstatus")
+@RequestMapping("/project_onboarding")
 public class ProjectOnboardingController {
 
 	@Autowired
 	ProjectOnboardingService projectOnboardingService;
 
-	private static Logger log = LoggerFactory.getLogger(ProjectOnboardingService.class);
+	private static final Logger logger  = LoggerFactory.getLogger(ProjectOnboardingController.class);
 
 	/**
 	 * Description : Fetch task status API
@@ -31,16 +31,16 @@ public class ProjectOnboardingController {
 	 * @Return: List of Types object
 	 * 
 	 */
-	@GetMapping
+	@GetMapping("/fetchtaskstatus")
 	public ResponseEntity<?> fetchAllTaskStatus() {
 		try {
-			log.info("Starting of fetch all task status");
+			logger.info("Starting of fetch all task status");
 			List<Types> fetchStatusList = projectOnboardingService.getAllTaskStatus();
 			return new ResponseEntity<List<Types>>(fetchStatusList, HttpStatus.OK);
 		}
 
 		catch (ProjectOnboardingException projectOnboardingException) {
-			log.error("The list is empty then throw exception");
+			logger.error("The list is empty then throw exception");
 			return new ResponseEntity<String>(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND);
 		}
 	}
