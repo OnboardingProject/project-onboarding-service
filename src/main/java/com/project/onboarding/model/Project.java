@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author UST
  * @description : Entity class for storing project details.
  * @date : 08 August 2022
  */
@@ -26,13 +26,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Document("Project")
 
-
-
 public class Project {
 	@Transient
-    public static final String SEQUENCE_NAME = "Project_Sequence";
-	
-	private String ProjectId;
+	public static final String SEQUENCE_NAME = "Project_Sequence";
+
+	private String projectId;
 	@NotBlank(message = "cannot be blank")
 	private String name;
 	@Size(min = 10, max = 150, message = "Description must be between 10 and 150")

@@ -22,28 +22,32 @@ public class ProjectOnboardingController {
 	@Autowired
 	ProjectOnboardingService projectOnboardingService;
 
-	private static final Logger logger  = LoggerFactory.getLogger(ProjectOnboardingController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProjectOnboardingController.class);
 
 	/**
-	 * Description : Fetch task status API
+	 * Description : API for fetch task status 
 	 * 
 	 * @Param :
+	 * 
 	 * @Return: List of Types object
 	 * 
 	 */
 	@GetMapping("/fetchtaskstatus")
-	public ResponseEntity<?> fetchAllTaskStatus() {
+	public ResponseEntity<TypesPayload> fetchAllTaskStatus() {
 		try {
 			logger.info("Starting of fetch all task status");
+
 			List<Types> fetchStatusList = projectOnboardingService.getAllTaskStatus();
-			return new ResponseEntity<List<Types>>(fetchStatusList, HttpStatus.OK);
+			logger.info("Return the tsk details");
+			return new ResponseEntity<TypesPayload>(
+					new TypesPayload(fetchStatusList, ProjectOnboardingConstant.SUCCESS, ""), HttpStatus.OK);
 		}
 
 		catch (ProjectOnboardingException projectOnboardingException) {
 			logger.error("The list is empty then throw exception");
-			return new ResponseEntity<String>(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "", ProjectOnboardingConstant.LIST_EMPTY),
+					HttpStatus.NOT_FOUND);
 		}
 	}
 
 }
-

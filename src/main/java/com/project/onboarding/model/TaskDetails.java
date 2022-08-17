@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDetails {
-	private String id;
+	private String taskId;
 	private String name;
 	private String status;
 }
