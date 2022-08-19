@@ -73,13 +73,7 @@ public class ProjectOnboardingServiceTests {
 		Assertions.assertThrows(ProjectOnboardingException.class, () -> {
 			projectOnboardingService.getAllTaskStatus();
 		});
-	
-
-		//when(typesRepository.findByTypeName(ProjectOnboardingConstant.TYPE_NAME))
-		//		.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND));
-		//Assertions.assertThrows(ProjectOnboardingException.class, () -> {
-		//	projectOnboardingService.getAllTaskStatus();
-		//});
+		
 	}
 
 }
