@@ -59,7 +59,7 @@ public class ProjectOnboardingControllerTests{
 		public void testFetchAllTaskStatusSucess() throws Exception {
 			Types types=new Types();
 			types.setTypeName("TASK_STATUS");
-			types.setTypeId("TS_002");
+			types.setTypeId(10);
 			types.setDesc("In-progress");
 			types.setPermission(null);
 			List<Types> statusList=new ArrayList<Types>();

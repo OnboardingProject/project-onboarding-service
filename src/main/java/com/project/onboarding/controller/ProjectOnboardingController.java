@@ -14,7 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+/**
+ * @author UST
+ * @description : Controller class for fetch task status.
+ * @date : 08 August 2022
+ */
 @RestController
 @RequestMapping("/project_onboarding")
 public class ProjectOnboardingController {
@@ -44,7 +48,7 @@ public class ProjectOnboardingController {
 		}
 
 		catch (ProjectOnboardingException projectOnboardingException) {
-			logger.error("The list is empty then throw exception");
+			logger.error("The task status list is empty");
 			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "", ProjectOnboardingConstant.LIST_EMPTY),
 					HttpStatus.NOT_FOUND);
 		}

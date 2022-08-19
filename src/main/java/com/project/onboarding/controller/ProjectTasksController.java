@@ -17,7 +17,11 @@ import com.project.onboarding.model.Task;
 import com.project.onboarding.service.ProjectTaskService;
 
 
-
+/**
+ * @author UST
+ * @description : Controller class for fetch the task details based on project.
+ * @date : 10 August 2022
+ */
 @RestController
 @RequestMapping("/project_task")
 public class ProjectTasksController {

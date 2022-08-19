@@ -64,7 +64,7 @@ public class ProjectTasksControllerTests {
 		Project project = new Project();
 		project.setProjectId("P_001");
 		Task task = new Task();
-		task.setTaskId("T_001");
+		task.setTaskId(9);
 		taskList.add(task);
 		project.setTasks(taskList);
 		projectList.add(project);

@@ -20,6 +20,11 @@ import org.springframework.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author UST
+ * @description : Service class for fetch task details based on project.
+ * @date : 08 August 2022
+ */
 @Service
 public class ProjectTaskService {
 
@@ -35,7 +40,7 @@ public class ProjectTaskService {
 	 * @description Fetch all task based on projectId
 	 */
 	public List<Task> getProjectTasksByProjectId(String projectId) {
-		logger.info("Fetch the project task list started");
+		logger.info("Method for fetch the project task list started");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("projectId").is(projectId));
 		List<Project> project = mongoTemplate.find(query, Project.class);
@@ -44,10 +49,10 @@ public class ProjectTaskService {
 			List<Task> projectTask = new ArrayList<Task>();
 			projectTask = project.get(0).getTasks();
 			logger.info("Return the task list details of selected projet");
-			return projectTask;
+			 return projectTask;
 
 		} else {
-			logger.error("Throw ProjectId not found exception");
+			logger.error("ProjectId not found");
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.NOT_FOUND);
 		}
 

@@ -22,7 +22,7 @@ import lombok.Setter;
 @Document("Types")
 public class Types {
 	private String typeName;
-	private String typeId;
+	private int typeId;
     private String desc;
     private List<String> permission;
 }
