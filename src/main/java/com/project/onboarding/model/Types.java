@@ -1,7 +1,5 @@
 package com.project.onboarding.model;
 
-import java.util.List;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Ust
  * @description : Entity class for storing static data.
  * @date : 08 August 2022
  */
@@ -24,5 +22,5 @@ public class Types {
 	private String typeName;
 	private int typeId;
     private String desc;
-    private List<String> permission;
+    private String permission;
 }
