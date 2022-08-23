@@ -21,5 +21,5 @@ public class Task {
 	private int taskId;
 	private String name;
 	private String description;
-	private List<String> designation;
+	private String designation;
 }

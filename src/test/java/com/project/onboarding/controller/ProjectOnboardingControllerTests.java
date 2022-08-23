@@ -66,7 +66,7 @@ public class ProjectOnboardingControllerTests{
 			statusList.add(types);
 					
 			when(projectOnboardingService.getAllTaskStatus()).thenReturn(statusList);
-			mockMvc.perform(MockMvcRequestBuilders.get("/project_onboarding/fetchtaskstatus").contentType(MediaType.APPLICATION_JSON))
+			mockMvc.perform(MockMvcRequestBuilders.get("/projectOnboarding/fetchTaskStatus").contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk());
 
 		}
@@ -76,10 +76,10 @@ public class ProjectOnboardingControllerTests{
  
 		      when(projectOnboardingService.getAllTaskStatus()).thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY,HttpStatus.NOT_FOUND)); 
 		        mockMvc.perform(MockMvcRequestBuilders
-		                .get("/project_onboarding/fetchtaskstatus")
+		                .get("/projectOnboarding/fetchTaskStatus")
 		                .contentType(MediaType.APPLICATION_JSON)
 		                .content(asJsonString(types)))
-		                .andExpect(status().isNotFound())
+		                .andExpect(status().isConflict())
 		                .andDo(MockMvcResultHandlers.print())
 		                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.LIST_EMPTY));
 		               verify(projectOnboardingService, times(1)).getAllTaskStatus(); 

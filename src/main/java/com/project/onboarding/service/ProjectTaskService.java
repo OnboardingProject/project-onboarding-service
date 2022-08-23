@@ -53,7 +53,7 @@ public class ProjectTaskService {
 
 		} else {
 			logger.error("ProjectId not found");
-			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.NOT_FOUND);
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.CONFLICT);
 		}
 
 	}

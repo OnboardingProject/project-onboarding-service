@@ -19,4 +19,5 @@ public class TaskDetails {
 	private int taskId;
 	private String name;
 	private String status;
+	private String designation;
 }

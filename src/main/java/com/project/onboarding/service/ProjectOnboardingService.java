@@ -50,7 +50,7 @@ public class ProjectOnboardingService {
 			return taskStatusList;}
 		 else {
 			logger.error("The task list is empty");
-			throw new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.NOT_FOUND);
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY, HttpStatus.CONFLICT);
 		}
 	}
 }

@@ -23,7 +23,7 @@ import com.project.onboarding.service.ProjectTaskService;
  * @date : 10 August 2022
  */
 @RestController
-@RequestMapping("/project_task")
+@RequestMapping("/projectTask")
 public class ProjectTasksController {
 
 	@Autowired
@@ -39,19 +39,19 @@ public class ProjectTasksController {
 	 * @Return: List of Task object
 	 * 
 	 */
-	@GetMapping("/fetch_project_task/{projectId}")
+	@GetMapping("/fetchProjectTask/{projectId}")
 	public ResponseEntity<TaskPayload> getAllTaskByProject(@PathVariable String projectId) {
 		try {
 			logger.info("Started project task fetch api method");
 			List<Task> tasksList = projecTaskService.getProjectTasksByProjectId(projectId);
 			logger.info("Return the selected project task details");
 
-			return new ResponseEntity<TaskPayload>(new TaskPayload(tasksList, ProjectOnboardingConstant.SUCCESS, ""),
+			return new ResponseEntity<TaskPayload>(new TaskPayload(tasksList, ProjectOnboardingConstant.SUCCESSTASKFETCH, ""),
 					HttpStatus.OK);
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			logger.error("Throw project not found exception");
 			return new ResponseEntity<TaskPayload>(
-					new TaskPayload(null, "", ProjectOnboardingConstant.PROJECTIDNOTFOUND), HttpStatus.NOT_FOUND);
+					new TaskPayload(null, "", ProjectOnboardingConstant.PROJECTIDNOTFOUND), HttpStatus.CONFLICT);
 		}
 	}
 

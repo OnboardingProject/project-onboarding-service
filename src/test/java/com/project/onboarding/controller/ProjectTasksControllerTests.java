@@ -70,7 +70,7 @@ public class ProjectTasksControllerTests {
 		projectList.add(project);
 
 		when(projecTaskService.getProjectTasksByProjectId("P_001")).thenReturn(taskList);
-		mockMvc.perform(MockMvcRequestBuilders.get("/project_task/fetch_project_task/P_001")
+		mockMvc.perform(MockMvcRequestBuilders.get("/projectTask/fetchProjectTask/P_001")
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
 
 	}
@@ -83,8 +83,8 @@ public class ProjectTasksControllerTests {
 
 		when(projecTaskService.getProjectTasksByProjectId("P_001")).thenThrow(
 				new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.NOT_FOUND));
-		mockMvc.perform(MockMvcRequestBuilders.get("/project_task/fetch_project_task/P_001")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(tasks))).andExpect(status().isNotFound())
+		mockMvc.perform(MockMvcRequestBuilders.get("/projectTask/fetchProjectTask/P_001")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(tasks))).andExpect(status().isConflict())
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
 						.value(ProjectOnboardingConstant.PROJECTIDNOTFOUND));
 		verify(projecTaskService, times(1)).getProjectTasksByProjectId("P_001");
