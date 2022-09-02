@@ -25,7 +25,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document("Project")
-
 public class Project {
 	@Transient
 	public static final String SEQUENCE_NAME = "Project_Sequence";

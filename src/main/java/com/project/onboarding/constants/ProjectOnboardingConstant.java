@@ -12,7 +12,12 @@ public  class  ProjectOnboardingConstant {
 		  public static final String PROJECTIDNOTFOUND="No project found";
 		  public static final String SUCCESSTASKFETCH="Successfully fetch the task list"; 
 		  public static final String SUCCESSSTATUSLIST="Successfully fetch the task status"; 
+
+		  public static final String INVALIDPROJECTID="ProjectId cannot be empty";
+		  public static final String INVALIDTASKID="Task not found";
+		  public static final String NOTASKFOUND="No task found";
 		  
+		  public static final String DELETESUCCESS="Successfully delete the tasks"; 
 
 }
 

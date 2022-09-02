@@ -5,6 +5,8 @@ import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Types;
 import com.project.onboarding.service.ProjectOnboardingService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description : Controller class for fetch task status.
  * @date : 08 August 2022
  */
+@Slf4j
 @RestController
 @RequestMapping("/projectOnboarding")
 public class ProjectOnboardingController {
@@ -52,6 +55,11 @@ public class ProjectOnboardingController {
 			logger.error("The task status list is empty");
 			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "", ProjectOnboardingConstant.LIST_EMPTY),
 					HttpStatus.CONFLICT);
+		}
+		catch(Exception exception) {
+			logger.error("Fetch status list failed");
+			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "",exception.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
