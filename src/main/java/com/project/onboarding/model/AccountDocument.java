@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Structure of the Account Document details to store in user entity.
  * @date : 08 August 2022
  */

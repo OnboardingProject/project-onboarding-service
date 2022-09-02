@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Entity class for storing static data.
  * @date : 08 August 2022
  */

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.project.onboarding.model.Project;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Repository class for accessing Project entity.
  * @date : 08 August 2022
  */

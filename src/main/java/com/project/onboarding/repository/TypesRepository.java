@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.project.onboarding.model.Types;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Repository class for accessing Types entity.
  * @date : 08 August 2022
  */

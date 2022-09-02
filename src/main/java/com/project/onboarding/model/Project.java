@@ -6,7 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Entity class for storing project details.
  * @date : 08 August 2022
  */
@@ -24,10 +24,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document("Project")
 public class Project {
-	@Id
-	private String id;
+	private String projectId;
 	@NotBlank(message = "cannot be blank")
 	private String name;
 	@Size(min = 10, max = 150, message = "Description must be between 10 and 150")

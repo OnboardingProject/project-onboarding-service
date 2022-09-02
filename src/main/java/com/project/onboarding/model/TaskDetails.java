@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * @author Vanisha Kulsu Mooppen
+ * @author Athira Rajan
  * @description : Structure of the Task details of a project to store in user entity.
  * @date : 08 August 2022
  */
@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDetails {
-	private String id;
-	private String name;
-	private String status;
+	private Integer taskId;
+	private String taskName;
+	private String taskStatus;
 }
