@@ -54,4 +54,20 @@ public class ProjectOnboardingUtil {
 		log.info("Role id for project owner is returned from the method");
 		return roleIdOfProjectOwner;
 	}
+	
+	/**
+	 * @param criteria
+	 * @return query, created query with given criteria
+	 * @description : Create query based on given criteria
+	 */
+	public Query createQuery(Criteria criteria) {
+		log.info("Creating query with criteria");
+
+		Query query = new Query();
+		query.addCriteria(criteria);
+
+		log.info("Returning query");
+		return query;
+	}
+	
 }

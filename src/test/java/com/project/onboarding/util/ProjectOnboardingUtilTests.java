@@ -86,4 +86,20 @@ public class ProjectOnboardingUtilTests {
         assertEquals(types.get(0).getTypeId(), roleIdOfProjectOwner);
         verify(mongoTemplate, times(1)).find(query, Types.class);
     }
+	
+	@DisplayName("JUnit test for createQuery success scenario")
+    @Test
+    public void givenCriteria_whenCreateQuery_thenReturnQueryWithCriteria() throws Exception{
+		Query query = new Query();
+		query.addCriteria(new Criteria().andOperator(Criteria.where("typeName").is(ProjectOnboardingConstant.ROLE),
+				Criteria.where("typeDesc").is(ProjectOnboardingConstant.PROJECT_OWNER)));
+		
+		Criteria criteria = new Criteria().andOperator(Criteria.where("typeName").is(ProjectOnboardingConstant.ROLE),
+				Criteria.where("typeDesc").is(ProjectOnboardingConstant.PROJECT_OWNER));
+		
+		Query queryFromMethod = projectOnboardingUtil.createQuery(criteria);
+
+        assertNotNull(queryFromMethod);
+        assertEquals(queryFromMethod, query);
+    }
 }

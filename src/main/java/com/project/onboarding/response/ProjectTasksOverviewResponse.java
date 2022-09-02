@@ -1,4 +1,4 @@
-package com.project.onboarding.model;
+package com.project.onboarding.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectTasksOverview {
+public class ProjectTasksOverviewResponse {
 	private String userId;
 	private String userName;
 	private double taskPercentage;

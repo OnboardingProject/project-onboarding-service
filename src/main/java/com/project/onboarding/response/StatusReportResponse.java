@@ -1,4 +1,4 @@
-package com.project.onboarding.model;
+package com.project.onboarding.response;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusReport {
-	private TaskPercentageReport taskPercentageReport;
-	private List<TaskDetailsReport> taskDetailsReport;
+public class StatusReportResponse {
+	private TaskPercentageReportResponse taskPercentageReport;
+	private List<TaskDetailsReportResponse> taskDetailsReport;
 }

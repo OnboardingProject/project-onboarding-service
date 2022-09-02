@@ -27,13 +27,13 @@ import lombok.Setter;
 public class Project {
 	private String projectId;
 	@NotBlank(message = "cannot be blank")
-	private String name;
+	private String projectName;
 	@Size(min = 10, max = 150, message = "Description must be between 10 and 150")
-	private String description;
+	private String projectDescription;
 	private LocalDateTime createdTime;
 	private String createdBy;
-	private String lastUpdatedBy;
-	private LocalDateTime lastUpdatedTime;
+	private String lastUpdateBy;
+	private LocalDateTime lastUpdateTime;
 	private List<String> userIds;
 	private List<Task> tasks;
 }

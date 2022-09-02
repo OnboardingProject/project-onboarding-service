@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
-import com.project.onboarding.model.ResponsePayLoad;
-import com.project.onboarding.model.StatusReport;
-import com.project.onboarding.model.TaskPercentageReport;
+import com.project.onboarding.response.ResponsePayLoad;
+import com.project.onboarding.response.StatusReportResponse;
+import com.project.onboarding.response.TaskPercentageReportResponse;
 import com.project.onboarding.service.OnboardingStatusService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class OnboardingStatusController {
 		try {
 			log.info("In preview status report controller");
 
-			TaskPercentageReport taskPercentageReport = onboardingStatusService.getPreviewStatusReport(projectId, userId);
+			TaskPercentageReportResponse taskPercentageReport = onboardingStatusService.getPreviewStatusReport(projectId, userId);
 			List<Object> statusReportObject = new ArrayList<Object>();
 			statusReportObject.add(taskPercentageReport);
 
@@ -82,7 +82,7 @@ public class OnboardingStatusController {
 		try {
 			log.info("In export status report controller");
 
-			StatusReport statusReport = onboardingStatusService.exportStatusReportInExcelFormat(projectId, userId);
+			StatusReportResponse statusReport = onboardingStatusService.exportStatusReportInExcelFormat(projectId, userId);
 			List<Object> statusReportObject = new ArrayList<Object>();
 			statusReportObject.add(statusReport);
 

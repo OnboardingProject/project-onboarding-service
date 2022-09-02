@@ -28,13 +28,13 @@ import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Project;
 import com.project.onboarding.model.ProjectTaskDetails;
-import com.project.onboarding.model.ProjectTasksOverview;
-import com.project.onboarding.model.StatusReport;
 import com.project.onboarding.model.Task;
 import com.project.onboarding.model.TaskDetails;
-import com.project.onboarding.model.TaskDetailsReport;
-import com.project.onboarding.model.TaskPercentageReport;
 import com.project.onboarding.model.User;
+import com.project.onboarding.response.ProjectTasksOverviewResponse;
+import com.project.onboarding.response.StatusReportResponse;
+import com.project.onboarding.response.TaskDetailsReportResponse;
+import com.project.onboarding.response.TaskPercentageReportResponse;
 import com.project.onboarding.util.ProjectOnboardingUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +61,11 @@ public class OnboardingStatusService {
 	 * @throws ProjectOnboardingException
 	 * @description : Preview status report of a particular user for a project
 	 */
-	public TaskPercentageReport getPreviewStatusReport(String projectId, String userId) throws Exception {
+	public TaskPercentageReportResponse getPreviewStatusReport(String projectId, String userId) throws Exception {
 		log.info("In preview report service");
 
 		Criteria criteria = Criteria.where("projectId").is(projectId);
-		Query query = createQuery(criteria);
+		Query query = projectOnboardingUtil.createQuery(criteria);
 
 		List<Project> projects = mongoTemplate.find(query, Project.class);
 		if (!CollectionUtils.isEmpty(projects)) {
@@ -73,7 +73,7 @@ public class OnboardingStatusService {
 
 			Project existingProject = projects.get(0);
 			criteria = Criteria.where("userId").is(userId);
-			query = createQuery(criteria);
+			query = projectOnboardingUtil.createQuery(criteria);
 
 			List<User> users = mongoTemplate.find(query, User.class);
 			if (!CollectionUtils.isEmpty(users)) {
@@ -81,7 +81,7 @@ public class OnboardingStatusService {
 
 				User existingUser = users.get(0);
 
-				TaskPercentageReport taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
+				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
 
 				log.info("Preview status report successfully returned in service");
 				return taskPercentageReport;
@@ -95,10 +95,10 @@ public class OnboardingStatusService {
 		}
 	}
 
-	public List<TaskDetailsReport> createTaskDetailsReport(Project project, User user) throws Exception {
+	public List<TaskDetailsReportResponse> createTaskDetailsReport(Project project, User user) throws Exception {
 		log.info("Creating task details report");
 
-		List<TaskDetailsReport> taskDetailListReport = new ArrayList<TaskDetailsReport>();
+		List<TaskDetailsReportResponse> taskDetailListReport = new ArrayList<TaskDetailsReportResponse>();
 		List<TaskDetails> userTaskDetails = user.getProjectIds().stream()
 				.filter(projectDetails -> projectDetails.getProjectId().equals(project.getProjectId()))
 				.map(ProjectTaskDetails::getTasks).collect(Collectors.flatMapping(List::stream, Collectors.toList()));
@@ -108,9 +108,9 @@ public class OnboardingStatusService {
 			List<Task> taskWithGivenId = projectTasks.stream().filter(task -> task.getTaskId().equals(taskDetails.getTaskId()))
 					.collect(Collectors.toList());
 			if (!CollectionUtils.isEmpty(taskWithGivenId)) {
-				TaskDetailsReport taskDetailsReport = new TaskDetailsReport();
+				TaskDetailsReportResponse taskDetailsReport = new TaskDetailsReportResponse();
 				taskDetailsReport.setTaskName(taskDetails.getTaskName());
-				taskDetailsReport.setTaskDescription(taskWithGivenId.get(0).getTaskDescription());
+				taskDetailsReport.setTaskDescription(taskWithGivenId.get(0).getTaskDesc());
 				taskDetailsReport.setTaskStatus(taskDetails.getTaskStatus());
 
 				taskDetailListReport.add(taskDetailsReport);
@@ -129,11 +129,11 @@ public class OnboardingStatusService {
 	 * @description : Download status report in excel format for a particular user
 	 *              of a project
 	 */
-	public StatusReport exportStatusReportInExcelFormat(String projectId, String userId) throws Exception {
+	public StatusReportResponse exportStatusReportInExcelFormat(String projectId, String userId) throws Exception {
 		log.info("In exportStatusReport Service");
 
 		Criteria criteria = Criteria.where("projectId").is(projectId);
-		Query query = createQuery(criteria);
+		Query query = projectOnboardingUtil.createQuery(criteria);
 
 		List<Project> projects = mongoTemplate.find(query, Project.class);
 		if (!CollectionUtils.isEmpty(projects)) {
@@ -141,7 +141,7 @@ public class OnboardingStatusService {
 
 			Project existingProject = projects.get(0);
 			criteria = Criteria.where("userId").is(userId);
-			query = createQuery(criteria);
+			query = projectOnboardingUtil.createQuery(criteria);
 
 			List<User> users = mongoTemplate.find(query, User.class);
 			if (!CollectionUtils.isEmpty(users)) {
@@ -149,10 +149,10 @@ public class OnboardingStatusService {
 
 				User existingUser = users.get(0);
 
-				TaskPercentageReport taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
-				List<TaskDetailsReport> taskDetailsListReport = createTaskDetailsReport(existingProject, existingUser);
+				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
+				List<TaskDetailsReportResponse> taskDetailsListReport = createTaskDetailsReport(existingProject, existingUser);
 
-				StatusReport statusReport = new StatusReport(taskPercentageReport, taskDetailsListReport);
+				StatusReportResponse statusReport = new StatusReportResponse(taskPercentageReport, taskDetailsListReport);
 
 				File file = new File(ProjectOnboardingConstant.getFileNameForExcelReport(projectId, userId));
 				file.getParentFile().mkdirs();
@@ -182,7 +182,7 @@ public class OnboardingStatusService {
 	}
 
 	public void createSheetWithValues(HSSFWorkbook workBook, String sheetName, List<String> headers,
-			StatusReport statusReport) {
+			StatusReportResponse statusReport) {
 		HSSFSheet sheet = workBook.createSheet(sheetName);
 		sheet.setDefaultColumnWidth(35);
 		sheet.setDefaultRowHeightInPoints(15);
@@ -253,35 +253,20 @@ public class OnboardingStatusService {
 	}
 
 	/**
-	 * @param criteria
-	 * @return query, created query with given criteria
-	 * @description : Create query based on given criteria
-	 */
-	public Query createQuery(Criteria criteria) {
-		log.info("Creating query with criteria");
-
-		Query query = new Query();
-		query.addCriteria(criteria);
-
-		log.info("Returning query");
-		return query;
-	}
-
-	/**
 	 * @param statusReport, project, user
 	 * @return TaskPercentageReport, Report of the task percentage for a user
 	 * @description : Create report object with values
 	 */
-	public TaskPercentageReport createTaskPercentageReport(Project project, User user) {
+	public TaskPercentageReportResponse createTaskPercentageReport(Project project, User user) {
 		log.info("Creating status report");
 
-		TaskPercentageReport taskPercentageReport = new TaskPercentageReport();
-		taskPercentageReport.setProjectName(project.getName());
-		taskPercentageReport.setProjectDescription(project.getDescription());
+		TaskPercentageReportResponse taskPercentageReport = new TaskPercentageReportResponse();
+		taskPercentageReport.setProjectName(project.getProjectName());
+		taskPercentageReport.setProjectDescription(project.getProjectDescription());
 		taskPercentageReport.setProjectOwner(findProjectOwners(project));
 
 		log.info("Setting user id and name in the status report");
-		ProjectTasksOverview projectTasksOverview = new ProjectTasksOverview();
+		ProjectTasksOverviewResponse projectTasksOverview = new ProjectTasksOverviewResponse();
 		projectTasksOverview.setUserId(user.getUserId());
 		projectTasksOverview.setUserName(user.getFirstName() + " " + user.getLastName());
 
@@ -345,7 +330,7 @@ public class OnboardingStatusService {
 
 		Criteria criteria = new Criteria().andOperator(Criteria.where("userId").is(userId),
 				Criteria.where("roleId").is(projectOnboardingUtil.getRoleIdOfProjectOwner()));
-		Query query = createQuery(criteria);
+		Query query = projectOnboardingUtil.createQuery(criteria);
 		List<User> users = mongoTemplate.find(query, User.class);
 
 		if (!CollectionUtils.isEmpty(users)) {
@@ -363,7 +348,7 @@ public class OnboardingStatusService {
 	 * @description Excel data of each row stored in a map with row number and row
 	 *              data
 	 */
-	public Map<Integer, List<String>> getListOfExcelData(StatusReport statusReport, String sheetName) {
+	public Map<Integer, List<String>> getListOfExcelData(StatusReportResponse statusReport, String sheetName) {
 		log.info("In method for getting list of excel data to print on excel");
 		
 		HashMap<Integer, List<String>> exportReportExcelData = new HashMap<Integer, List<String>>();
@@ -373,7 +358,7 @@ public class OnboardingStatusService {
 			log.info("Getting data for the first sheet in excel");
 			
 			List<String> rowData = new ArrayList<String>();
-			TaskPercentageReport taskPercentageReport = statusReport.getTaskPercentageReport();
+			TaskPercentageReportResponse taskPercentageReport = statusReport.getTaskPercentageReport();
 			rowData.add(taskPercentageReport.getProjectName());
 			rowData.add(taskPercentageReport.getProjectOwner());
 			rowData.add(taskPercentageReport.getProjectDescription());
@@ -385,8 +370,8 @@ public class OnboardingStatusService {
 		} else {
 			log.info("Getting data for the second sheet in excel");
 
-			List<TaskDetailsReport> taskDetailsListReport = statusReport.getTaskDetailsReport();
-			for (TaskDetailsReport taskDetailsReport : taskDetailsListReport) {
+			List<TaskDetailsReportResponse> taskDetailsListReport = statusReport.getTaskDetailsReport();
+			for (TaskDetailsReportResponse taskDetailsReport : taskDetailsListReport) {
 				List<String> rowData = new ArrayList<String>();
 				rowData.add(taskDetailsReport.getTaskName());
 				rowData.add(taskDetailsReport.getTaskDescription());

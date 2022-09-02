@@ -13,11 +13,16 @@ import java.util.Map;
  */
 
 public class ProjectOnboardingConstant {
-	public static final String PROJECT_NOT_FOUND = "Project is not found";
 	
-	public static final String USER_NOT_FOUND = "User is not found";
+	public static final String PROJECT_NOT_FOUND = "Project not found";
+	
+	public static final String USER_NOT_FOUND = "User not found";
 	
 	public static final String TASK_NOT_FOUND = "Task(s) are not found";
+	
+	public static final String API_GET_PROJECTS_SUCCESS = "Projects are fetched successfully";
+	
+	public static final String API_GET_RESOURCES_SUCCESS = "Resources are fetched successfully";
 	
 	public static final String API_GET_PREVIEW_REPORT_SUCCESS = "Preview of the report returned successfully";
 	
@@ -38,6 +43,8 @@ public class ProjectOnboardingConstant {
 	public static final String PROJECT_OWNER = "Project Owner";
 	
 	public static final String ROLE = "ROLE";
+	
+	public static final String RESOURCE = "Resource";
 
 	static {
 		Map<String, Integer> taskPercentageList = new HashMap<String, Integer>();

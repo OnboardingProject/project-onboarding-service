@@ -23,9 +23,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.onboarding.exception.ProjectOnboardingException;
-import com.project.onboarding.model.ProjectTasksOverview;
-import com.project.onboarding.model.StatusReport;
-import com.project.onboarding.model.TaskPercentageReport;
+import com.project.onboarding.response.ProjectTasksOverviewResponse;
+import com.project.onboarding.response.StatusReportResponse;
+import com.project.onboarding.response.TaskPercentageReportResponse;
 import com.project.onboarding.service.OnboardingStatusService;
 
 /**
@@ -44,15 +44,15 @@ public class OnboardingStatusControllerTests {
 
 	private MockMvc mockMvc;
 
-	private StatusReport statusReport = new StatusReport();
+	private StatusReportResponse statusReport = new StatusReportResponse();
 
-	private ProjectTasksOverview projectTasksOverview = new ProjectTasksOverview();
+	private ProjectTasksOverviewResponse projectTasksOverview = new ProjectTasksOverviewResponse();
 
 	@BeforeEach
 	public void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(onboardingStatusController).build();
 
-		TaskPercentageReport taskPercentageReport = new TaskPercentageReport();
+		TaskPercentageReportResponse taskPercentageReport = new TaskPercentageReportResponse();
 		taskPercentageReport.setProjectName("Project Onboarding");
 		taskPercentageReport.setProjectDescription("Onboarding reources to project");
 		taskPercentageReport.setProjectOwner("Vanisha");

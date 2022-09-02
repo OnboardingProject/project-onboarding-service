@@ -30,13 +30,13 @@ import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.AccountDocument;
 import com.project.onboarding.model.Project;
 import com.project.onboarding.model.ProjectTaskDetails;
-import com.project.onboarding.model.ProjectTasksOverview;
-import com.project.onboarding.model.StatusReport;
 import com.project.onboarding.model.Task;
 import com.project.onboarding.model.TaskDetails;
-import com.project.onboarding.model.TaskDetailsReport;
-import com.project.onboarding.model.TaskPercentageReport;
 import com.project.onboarding.model.User;
+import com.project.onboarding.response.ProjectTasksOverviewResponse;
+import com.project.onboarding.response.StatusReportResponse;
+import com.project.onboarding.response.TaskDetailsReportResponse;
+import com.project.onboarding.response.TaskPercentageReportResponse;
 import com.project.onboarding.util.ProjectOnboardingUtil;
 
 /**
@@ -70,7 +70,7 @@ public class OnboardingStatusServiceTests {
 	List<TaskDetails> taskDetailsList = new ArrayList<TaskDetails>();
 	TaskDetails taskDetails = new TaskDetails();
 	ProjectTaskDetails projectTaskDetails = new ProjectTaskDetails();
-	StatusReport statusReport;
+	StatusReportResponse statusReport;
 	User user1, user2, user3;
 	Project project;
 	
@@ -87,7 +87,7 @@ public class OnboardingStatusServiceTests {
     @BeforeEach
     public void setup(){
     	designations.add("Software Developer");
-    	Task task = new Task("T_1", "seat allocation", "seat allocation", designations); 
+    	Task task = new Task(1, "seat allocation", "seat allocation", designations); 
     	tasks.add(task);
     	
     	userIds.add("U13");
@@ -102,24 +102,23 @@ public class OnboardingStatusServiceTests {
     	accountDocuments.add(accountDocument);
     	
     	projectTaskDetails = new ProjectTaskDetails("P_1", taskDetailsList);
-    	long phoneNumber = 1245232542;
     	
-    	user1 = new User("U13", "Thara", "Test", "Thara", "P", "thara.pattuamveetil@ust.com", phoneNumber, "Project head", dateTime, "Admin", "Admin", dateTime, 2, accountDocuments, "Thara", projectTaskDetailsList);
-    	user2 = new User("U14", "Sumitha", "Test", "Sumitha", "Vidhukumar", "sumitha.vidhukumar@ust.com", phoneNumber, "Project manager", dateTime, "U13", "U13", dateTime, 3, accountDocuments, "Thara, Sumitha", projectTaskDetailsList);
+    	user1 = new User("U13", "Thara", "Test", "Thara", "P", "thara.pattuamveetil@ust.com", "1245232542", "Project head", dateTime, "Admin", "Admin", dateTime, 2, accountDocuments, "Thara", projectTaskDetailsList);
+    	user2 = new User("U14", "Sumitha", "Test", "Sumitha", "Vidhukumar", "sumitha.vidhukumar@ust.com", "1245232542", "Project manager", dateTime, "U13", "U13", dateTime, 3, accountDocuments, "Thara, Sumitha", projectTaskDetailsList);
     	
-    	taskDetails = new TaskDetails("T_1", "seat allocation", "In-progress");
+    	taskDetails = new TaskDetails(1, "seat allocation", "In-progress");
     	taskDetailsList.add(taskDetails);
     	projectTaskDetails = new ProjectTaskDetails("P_1", taskDetailsList);
     	projectTaskDetailsList.add(projectTaskDetails);
-    	user3 = new User("U15", "Janaki", "Test", "Janaki", "Perumal", "janaki.perumal@ust.com", phoneNumber, "Software Engineer", dateTime, "U14", "U14", dateTime, 4, accountDocuments, "Thara, Sumitha, Janaki", projectTaskDetailsList);
+    	user3 = new User("U15", "Janaki", "Test", "Janaki", "Perumal", "janaki.perumal@ust.com", "1245232542", "Software Engineer", dateTime, "U14", "U14", dateTime, 4, accountDocuments, "Thara, Sumitha, Janaki", projectTaskDetailsList);
 
-    	ProjectTasksOverview projectTasksOverview = new ProjectTasksOverview("U15", "Janaki Perumal", 50);
+    	ProjectTasksOverviewResponse projectTasksOverview = new ProjectTasksOverviewResponse("U15", "Janaki Perumal", 50);
     	
-    	TaskPercentageReport taskPercentageReport = new TaskPercentageReport("Onboarding", "Sumitha Vidhukumar", "Onboarding resources", projectTasksOverview);
-    	TaskDetailsReport taskDetailsReport = new TaskDetailsReport("seat allocation", "seat allocation", "In-progress");
-    	List<TaskDetailsReport> taskDetailsList = Arrays.asList(taskDetailsReport);
+    	TaskPercentageReportResponse taskPercentageReport = new TaskPercentageReportResponse("Onboarding", "Sumitha Vidhukumar", "Onboarding resources", projectTasksOverview);
+    	TaskDetailsReportResponse taskDetailsReport = new TaskDetailsReportResponse("seat allocation", "seat allocation", "In-progress");
+    	List<TaskDetailsReportResponse> taskDetailsList = Arrays.asList(taskDetailsReport);
     	
-    	statusReport = new StatusReport(taskPercentageReport, taskDetailsList);
+    	statusReport = new StatusReportResponse(taskPercentageReport, taskDetailsList);
 
     	users2.add(user2);
     	users3.add(user3);
@@ -145,10 +144,11 @@ public class OnboardingStatusServiceTests {
     public void givenProjectIdAndUserId_whenGetPreviewStatusReport_thenReturnStatusReportObject() throws Exception{
     	when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users3);
     	when(projectOnboardingUtil.getRoleIdOfProjectOwner()).thenReturn(3);
-
+		
+    	setQueryAndCriteriaForProjectAndUser(true, true);
     	stubQueryValues();
     	
-    	TaskPercentageReport taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
+    	TaskPercentageReportResponse taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
         assertNotNull(taskPercentageReportFromService);
         assertEquals(statusReport.getTaskPercentageReport().getProjectTasksOverview().getUserName(), taskPercentageReportFromService.getProjectTasksOverview().getUserName());
         assertEquals(statusReport.getTaskPercentageReport().getProjectTasksOverview().getTaskPercentage(), taskPercentageReportFromService.getProjectTasksOverview().getTaskPercentage());
@@ -159,7 +159,8 @@ public class OnboardingStatusServiceTests {
 	@Test
 	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_AndProjectNotExists_thenThrowException() {
 		projects.clear();
-    	when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects).thenThrow(new ProjectOnboardingException("Project not found"));
+		setQueryAndCriteriaForProjectAndUser(true, false);
+		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects).thenThrow(new ProjectOnboardingException("Project not found"));
 
 		assertThrows(ProjectOnboardingException.class, () -> {
 			onboardingStatusService.getPreviewStatusReport("P_1", "U15");
@@ -171,6 +172,8 @@ public class OnboardingStatusServiceTests {
 	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_AndUserNotExists_thenThrowException() {
     	when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects);
 		when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users1).thenThrow(new ProjectOnboardingException("User not found"));
+
+    	setQueryAndCriteriaForProjectAndUser(true, true);
 
 		assertThrows(ProjectOnboardingException.class, () -> {
 			onboardingStatusService.getPreviewStatusReport("P_1", "U15");
@@ -187,9 +190,10 @@ public class OnboardingStatusServiceTests {
     	when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users3);
     	when(projectOnboardingUtil.getRoleIdOfProjectOwner()).thenReturn(3);
     	  
+    	setQueryAndCriteriaForProjectAndUser(true, true);
     	stubQueryValues();
     	
-    	TaskPercentageReport taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
+    	TaskPercentageReportResponse taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
         assertNotNull(taskPercentageReportFromService);
         assertEquals(statusReport.getTaskPercentageReport().getProjectTasksOverview().getUserName(), taskPercentageReportFromService.getProjectTasksOverview().getUserName());
         assertEquals(0, taskPercentageReportFromService.getProjectTasksOverview().getTaskPercentage());
@@ -201,13 +205,14 @@ public class OnboardingStatusServiceTests {
 	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_AndUserDoesNotProjectsAssociated_thenReturnStatusReportObject() throws Exception{
 		List<ProjectTaskDetails> projectTaskDetailsList = new ArrayList<ProjectTaskDetails>();
 		user3.setProjectIds(projectTaskDetailsList);
-
+		
+		setQueryAndCriteriaForProjectAndUser(true, true);
     	when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users3);
     	when(projectOnboardingUtil.getRoleIdOfProjectOwner()).thenReturn(3);
 
     	stubQueryValues();
     	
-    	TaskPercentageReport taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
+    	TaskPercentageReportResponse taskPercentageReportFromService = onboardingStatusService.getPreviewStatusReport("P_1", "U15");
         assertNotNull(taskPercentageReportFromService);
         assertEquals(statusReport.getTaskPercentageReport().getProjectTasksOverview().getUserName(), taskPercentageReportFromService.getProjectTasksOverview().getUserName());
         assertEquals(0, taskPercentageReportFromService.getProjectTasksOverview().getTaskPercentage());
@@ -220,9 +225,10 @@ public class OnboardingStatusServiceTests {
     	when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users3);
     	when(projectOnboardingUtil.getRoleIdOfProjectOwner()).thenReturn(3);
     	
+    	setQueryAndCriteriaForProjectAndUser(true, true);
     	stubQueryValues();
     	
-    	StatusReport statusReportFromService = onboardingStatusService.exportStatusReportInExcelFormat("P_1", "U15");
+    	StatusReportResponse statusReportFromService = onboardingStatusService.exportStatusReportInExcelFormat("P_1", "U15");
         assertNotNull(statusReportFromService);
         assertEquals(statusReport.getTaskDetailsReport().get(0).getTaskName(), statusReportFromService.getTaskDetailsReport().get(0).getTaskName());
         assertEquals(statusReport.getTaskDetailsReport().get(0).getTaskStatus(), statusReportFromService.getTaskDetailsReport().get(0).getTaskStatus());
@@ -232,7 +238,8 @@ public class OnboardingStatusServiceTests {
 	@Test
 	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_AndProjectNotExists_thenThrowException() {
 		projects.clear();
-    	when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects).thenThrow(new ProjectOnboardingException("Project not found"));
+		setQueryAndCriteriaForProjectAndUser(true, false);
+		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects).thenThrow(new ProjectOnboardingException("Project not found"));
 
 		assertThrows(ProjectOnboardingException.class, () -> {
 			onboardingStatusService.exportStatusReportInExcelFormat("P_1", "U15");
@@ -244,6 +251,8 @@ public class OnboardingStatusServiceTests {
 	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_AndUserNotExists_thenThrowException() {
 		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects);
 		when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users1).thenThrow(new ProjectOnboardingException("User not found"));
+
+    	setQueryAndCriteriaForProjectAndUser(true, true);
 
 		assertThrows(ProjectOnboardingException.class, () -> {
 			onboardingStatusService.exportStatusReportInExcelFormat("P_1", "U15");
@@ -259,6 +268,7 @@ public class OnboardingStatusServiceTests {
 		when(mongoTemplate.find(Query.query(Criteria.where("userId").is("U15")), User.class)).thenReturn(users3);
     	when(projectOnboardingUtil.getRoleIdOfProjectOwner()).thenReturn(3);
     	
+    	setQueryAndCriteriaForProjectAndUser(true, true);
     	stubQueryValues();
     	
     	assertThrows(ProjectOnboardingException.class, () -> {
@@ -268,7 +278,17 @@ public class OnboardingStatusServiceTests {
 	
 	public void stubQueryValues() {
 		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_1")), Project.class)).thenReturn(projects);
+		Criteria criteria = new Criteria().andOperator(Criteria.where("userId").is("U13"),
+				Criteria.where("roleId").is(3));
+		when(projectOnboardingUtil.createQuery(criteria)).thenReturn(new Query().addCriteria(criteria));
+		
+		criteria = new Criteria().andOperator(Criteria.where("userId").is("U14"),
+				Criteria.where("roleId").is(3));
+		when(projectOnboardingUtil.createQuery(criteria)).thenReturn(new Query().addCriteria(criteria));
 
+		criteria = new Criteria().andOperator(Criteria.where("userId").is("U15"),
+				Criteria.where("roleId").is(3));
+		when(projectOnboardingUtil.createQuery(criteria)).thenReturn(new Query().addCriteria(criteria));
 		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U13"),
 				Criteria.where("roleId").is(3))), User.class)).thenReturn(users1);
     	when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U14"),
@@ -276,5 +296,19 @@ public class OnboardingStatusServiceTests {
     	when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U15"),
 				Criteria.where("roleId").is(3))), User.class)).thenReturn(users1);
 	}
-	 
+	
+	public void setQueryAndCriteriaForProjectAndUser(boolean project, boolean user) {
+		Criteria criteria;
+		
+		if(project) {
+			criteria = Criteria.where("projectId").is("P_1");
+			when(projectOnboardingUtil.createQuery(criteria)).thenReturn(new Query().addCriteria(criteria));
+		}
+		if(user) {
+			criteria = Criteria.where("userId").is("U15");
+			when(projectOnboardingUtil.createQuery(criteria)).thenReturn(new Query().addCriteria(criteria));
+		}
+			
+	}
+	
 }

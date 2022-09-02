@@ -1,4 +1,4 @@
-package com.project.onboarding.model;
+package com.project.onboarding.response;
 
 import java.util.List;
 

@@ -84,6 +84,7 @@
 						<exclude>com/project/onboarding/constants/*</exclude>
 						<exclude>com/project/onboarding/exception/*</exclude>
 						<exclude>com/project/onboarding/model/*</exclude>
+						<exclude>com/project/onboarding/response/*</exclude>
 						<exclude>com/project/onboarding/**/*Tests.java</exclude>
 					</excludes>
 				</configuration>

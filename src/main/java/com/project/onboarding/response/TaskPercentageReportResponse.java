@@ -1,4 +1,4 @@
-package com.project.onboarding.model;
+package com.project.onboarding.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,9 +15,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskPercentageReport {
+public class TaskPercentageReportResponse {
 	private String projectName;
 	private String projectOwner;
 	private String projectDescription;
-	private ProjectTasksOverview projectTasksOverview;
+	private ProjectTasksOverviewResponse projectTasksOverview;
 }

@@ -23,17 +23,17 @@ import lombok.Setter;
 @Document("User")
 public class User {
 	private String userId;
-	private String name;
+	private String userName;
     private String accountName;
     private String firstName;
     private String lastName;
     private String emailId;
-    private Long phoneNumber;
+    private String phoneNo;
     private String designation;
     private LocalDateTime createdTime;
     private String createdBy;
-    private String lastUpdatedBy;
-    private LocalDateTime lastUpdatedTime;
+    private String lastUpdateBy;
+    private LocalDateTime lastUpdateTime;
     private Integer roleId;
     private List<AccountDocument> accountDocuments;
     private String hierarchy;
