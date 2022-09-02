@@ -34,7 +34,7 @@ public class User {
     private String createdBy;
     private String lastUpdatedBy;
     private LocalDateTime lastUpdatedTime;
-    private String roleId;
+    private Integer roleId;
     private List<AccountDocument> accountDocuments;
     private String hierarchy;
     private List<ProjectTaskDetails> projectIds;

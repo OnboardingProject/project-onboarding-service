@@ -18,8 +18,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {
-	private String id;
-	private String name;
-	private String description;
-	private List<String> designation;
+	private String taskId;
+	private String taskName;
+	private String taskDescription;
+	private List<String> taskDesignation;
 }

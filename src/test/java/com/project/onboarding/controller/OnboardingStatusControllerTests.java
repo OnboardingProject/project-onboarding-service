@@ -25,7 +25,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.ProjectTasksOverview;
 import com.project.onboarding.model.StatusReport;
+import com.project.onboarding.model.TaskPercentageReport;
 import com.project.onboarding.service.OnboardingStatusService;
+
+/**
+ * @author Vanisha Kulsu Mooppen
+ * @description : jUnit testcases for Onboarding status controller.
+ * @date : 12 August 2022
+ */
 
 @ExtendWith(MockitoExtension.class)
 public class OnboardingStatusControllerTests {
@@ -45,14 +52,17 @@ public class OnboardingStatusControllerTests {
 	public void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(onboardingStatusController).build();
 
-		statusReport.setProjectName("Project Onboarding");
-		statusReport.setProjectDescription("Onboarding reources to project");
-		statusReport.setProjectOwner("Vanisha");
+		TaskPercentageReport taskPercentageReport = new TaskPercentageReport();
+		taskPercentageReport.setProjectName("Project Onboarding");
+		taskPercentageReport.setProjectDescription("Onboarding reources to project");
+		taskPercentageReport.setProjectOwner("Vanisha");
 
 		projectTasksOverview.setUserId("U13");
-		projectTasksOverview.setUsername("Kulsu");
+		projectTasksOverview.setUserName("Kulsu");
 		projectTasksOverview.setTaskPercentage(50);
-		statusReport.setProjectTasksOverview(projectTasksOverview);
+		taskPercentageReport.setProjectTasksOverview(projectTasksOverview);
+		
+		statusReport.setTaskPercentageReport(taskPercentageReport);
 	}
 
 	@AfterEach
@@ -63,14 +73,14 @@ public class OnboardingStatusControllerTests {
 
 	@DisplayName("JUnit test for getPreviewStatusReport API success scenario")
 	@Test
-	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_thenStatusReportObject() throws Exception {
-		when(onboardingStatusService.getPreviewStatusReport(any(), any())).thenReturn(statusReport);
+	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_thenReturnStatusReportObject() throws Exception {
+		when(onboardingStatusService.getPreviewStatusReport(any(), any())).thenReturn(statusReport.getTaskPercentageReport());
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/previewReport/P_1/U13")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(statusReport))).andExpect(status().isOk())
 				.andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.data[0].projectTasksOverview.taskPercentage")
-						.value(statusReport.getProjectTasksOverview().getTaskPercentage()));
+						.value(statusReport.getTaskPercentageReport().getProjectTasksOverview().getTaskPercentage()));
 		verify(onboardingStatusService, times(1)).getPreviewStatusReport(any(), any());
 	}
 
@@ -100,6 +110,47 @@ public class OnboardingStatusControllerTests {
 				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
 		verify(onboardingStatusService, times(1)).getPreviewStatusReport(any(), any());
+	}
+	
+	@DisplayName("JUnit test for exportStatusReportInExcelFormat API success scenario")
+	@Test
+	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_thenReturnStatusReportObject() throws Exception {
+		when(onboardingStatusService.exportStatusReportInExcelFormat(any(), any())).thenReturn(statusReport);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/exportReport/P_1/U13")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(statusReport))).andExpect(status().isOk())
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data[0].taskPercentageReport.projectTasksOverview.taskPercentage")
+						.value(statusReport.getTaskPercentageReport().getProjectTasksOverview().getTaskPercentage()));
+		verify(onboardingStatusService, times(1)).exportStatusReportInExcelFormat(any(), any());
+	}
+	
+	@DisplayName("JUnit test for exportStatusReportInExcelFormat API failure scenarios")
+	@Test
+	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_thenThrowProjectOnboardingException()
+			throws Exception {
+		when(onboardingStatusService.exportStatusReportInExcelFormat(any(), any()))
+				.thenThrow(new ProjectOnboardingException("Project Not Found"));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/api/v1/exportReport/P_1/U13").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Project Not Found"));
+		verify(onboardingStatusService, times(1)).exportStatusReportInExcelFormat(any(), any());
+	}
+
+	@DisplayName("JUnit test for exportStatusReportInExcelFormat API failure scenarios")
+
+	@Test
+	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_thenThrowException() throws Exception {
+		when(onboardingStatusService.exportStatusReportInExcelFormat(any(), any()))
+				.thenThrow(new Exception("Internal Server Error"));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/api/v1/exportReport/P_1/U13").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
+		verify(onboardingStatusService, times(1)).exportStatusReportInExcelFormat(any(), any());
 	}
 
 	public static String asJsonString(final Object obj) {

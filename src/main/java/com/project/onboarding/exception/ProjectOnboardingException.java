@@ -5,6 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * @author Vanisha Kulsu Mooppen
+ * @description : Exception class for project onboarding module
+ * @date : 10 August 2022
+ */
+
 @Getter
 @Setter
 @AllArgsConstructor
