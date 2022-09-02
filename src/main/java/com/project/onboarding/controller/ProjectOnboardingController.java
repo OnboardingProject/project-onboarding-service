@@ -23,7 +23,7 @@ import com.project.onboarding.service.ProjectOnboardingService;
 
 /**
  * @author Athira Rajan
- * @description : Controller for Project Onboarding module
+ * @description : Controller for Project OnBoarding module
  * @date : 10 August 2022
  */
 
