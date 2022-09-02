@@ -1,7 +1,5 @@
 package com.project.onboarding.model;
 
-import java.util.List;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -19,10 +17,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "Type")
 public class Types {
 	private String typeName;
-	private String id;
-    private String desc;
-    private List<String> permission;
+	private int typeId;
+    private String typeDesc;
+    private String permission;
 }

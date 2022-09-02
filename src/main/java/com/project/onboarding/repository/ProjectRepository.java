@@ -12,6 +12,6 @@ import com.project.onboarding.model.Project;
  */
 
 @Repository
-public interface ProjectRepository extends MongoRepository<Project, Integer>{
+public interface ProjectRepository extends MongoRepository<Project, String>{
 
 }

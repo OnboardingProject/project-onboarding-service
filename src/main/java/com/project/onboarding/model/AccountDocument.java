@@ -16,6 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDocument {
-	private String id;
-	private String status;
+	private String documentId;
+	private String documentstatus;
 }

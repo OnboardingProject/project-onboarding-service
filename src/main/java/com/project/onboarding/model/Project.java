@@ -24,14 +24,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "Project")
 public class Project {
 	@Id
-	private String id;
+	private String projectId;
 	@NotBlank(message = "cannot be blank")
-	private String name;
+	private String projectName;
 	@Size(min = 10, max = 150, message = "Description must be between 10 and 150")
-	private String description;
+	private String projectDescription;
 	private LocalDateTime createdTime;
 	private String createdBy;
 	private String lastUpdatedBy;

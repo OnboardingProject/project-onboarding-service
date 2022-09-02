@@ -21,22 +21,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "User")
 public class User {
 	@Id
-	private String id;
-	private String name;
+	private String userId;
+	private String userName;
     private String accountName;
     private String firstName;
     private String lastName;
     private String emailId;
-    private Long phoneNumber;
+    private String phoneNumber;
     private String designation;
     private LocalDateTime createdTime;
     private String createdBy;
     private String lastUpdatedBy;
     private LocalDateTime lastUpdatedTime;
-    private String roleId;
+    private int roleId;
     private List<AccountDocument> accountDocuments;
     private String hierarchy;
     private List<ProjectTaskDetails> projectIds;
