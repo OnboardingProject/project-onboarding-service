@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/onboarding-status")
 public class OnboardingStatusController {
 
 	@Autowired
@@ -39,13 +39,13 @@ public class OnboardingStatusController {
 
 	/**
 	 * @param projectId, userId
-	 * @return ResponseEntity<ResponsePayLoad>
+	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException, Exception
 	 * @description : Preview status report of a particular user for a project
 	 */
-	@GetMapping("/previewReport/{projectId}/{userId}")
+	@GetMapping("/preview-report/{projectId}/{userId}")
 	public ResponseEntity<ResponsePayLoad> getPreviewStatusReport(
-			@Valid @PathVariable("projectId") @NotNull @Size(min = 1, message = "Invalid id, please provide valid id") String projectId,
-			@PathVariable("userId") @NotNull @Size(min = 1, message = "Invalid id, please provide valid id") String userId) {
+			@Valid @PathVariable("projectId") @NotNull @Size(min = 1, message = ProjectOnboardingConstant.INVALID_PROJECT_ID) String projectId,
+			@PathVariable("userId") @NotNull @Size(min = 1, message = ProjectOnboardingConstant.INVALID_USER_ID) String userId) {
 		try {
 			log.info("In preview status report controller");
 
@@ -71,13 +71,13 @@ public class OnboardingStatusController {
 
 	/**
 	 * @param projectId, userId
-	 * @return ResponseEntity<ResponsePayLoad>
+	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException, Exception
 	 * @description : Download status report in excel format for a particular user of a project
 	 */
-	@GetMapping("/exportReport/{projectId}/{userId}")
+	@GetMapping("/export-report/{projectId}/{userId}")
 	public ResponseEntity<ResponsePayLoad> exportStatusReportInExcelFormat(
-			@Valid @PathVariable("projectId") @Size(min = 1, message = "Invalid id, please provide valid id") String projectId,
-			@PathVariable("userId") @Size(min = 1, message = "Invalid id, please provide valid id") String userId) {
+			@Valid @PathVariable("projectId") @Size(min = 1, message = ProjectOnboardingConstant.INVALID_PROJECT_ID) String projectId,
+			@PathVariable("userId") @Size(min = 1, message = ProjectOnboardingConstant.INVALID_USER_ID) String userId) {
 
 		try {
 			log.info("In export status report controller");

@@ -13,44 +13,59 @@ import java.util.Map;
  */
 
 public class ProjectOnboardingConstant {
-	
+
 	public static final String PROJECT_NOT_FOUND = "Project not found";
-	
+
 	public static final String USER_NOT_FOUND = "User not found";
-	
-	public static final String TASK_NOT_FOUND = "Task(s) are not found";
-	
+
+	public static final String TASK_NOT_FOUND = "Task(s) not found";
+
 	public static final String API_GET_PROJECTS_SUCCESS = "Projects are fetched successfully";
-	
+
 	public static final String API_GET_RESOURCES_SUCCESS = "Resources are fetched successfully";
-	
+
 	public static final String API_GET_PREVIEW_REPORT_SUCCESS = "Preview of the report returned successfully";
-	
+
 	public static final String API_EXPORT_REPORT_SUCCESS = "Status Report is downloaded successfully in ";
 
-	public static final List<String> EXPORT_REPORT_EXCEL_HEADERS_STATUS_REPORT = Arrays.asList("Project Name", "Project Owner(s)", "Project Description", "Project Tasks Overview", "", "");
-	
-	public static final List<String> EXPORT_REPORT_EXCEL_SUB_HEADERS_STATUS_REPORT = Arrays.asList("", "", "", "User ID", "User Name", "Task Percentage");
+	public static final List<String> EXPORT_REPORT_EXCEL_HEADERS_STATUS_REPORT = Arrays.asList("Project Name",
+			"Project Owner(s)", "Project Description", "Project Tasks Overview", "", "");
 
-	public static final List<String> EXPORT_REPORT_EXCEL_HEADERS_TASK_DETAILS = Arrays.asList("Task Name", "Task Description", "Task Status");
+	public static final List<String> EXPORT_REPORT_EXCEL_SUB_HEADERS_STATUS_REPORT = Arrays.asList("", "", "",
+			"User ID", "User Name", "Task Percentage");
+
+	public static final List<String> EXPORT_REPORT_EXCEL_HEADERS_TASK_DETAILS = Arrays.asList("Task Name",
+			"Task Description", "Task Status");
 
 	public static final Map<String, Integer> TASK_STATUS_PERCENTAGE;
-	
+
 	public static final String EXPORT_REPORT_SHEET_NAME_STATUS_REPORT = "Status Report";
-	
+
 	public static final String EXPORT_REPORT_SHEET_NAME_TASK_DETAILS = "Task Details";
-	
+
 	public static final String PROJECT_OWNER = "Project Owner";
-	
+
 	public static final String ROLE = "ROLE";
-	
+
 	public static final String RESOURCE = "Resource";
-	
+
 	public static final String TASKLIST_NOT_FOUND = "Project or User or Tasks associated are not found";
-	
+
 	public static final String TASKLIST_FETCH_SUCCESS = "Task list fetched successfully";
-	
+
 	public static final String TASKSTATUS_SAVE_SUCCESS = "Task Status saved successfully";
+
+	public static final String STATUS_LIST_EMPTY = "The Status list is empty";
+	
+	public static final String TASK_STATUS = "TASK_STATUS";
+	
+	public static final String TASKSTATUS_FETCH_SUCCESS = "Task status fetched successfully";
+
+	public static final String INVALID_PROJECT_ID = "Invalid project id, please provide valid id";
+	
+	public static final String INVALID_USER_ID = "Invalid user id, please provide valid id";
+	
+	public static final String DELETE_TASK_SUCCESS = "Tasks deleted successfully";
 
 	static {
 		Map<String, Integer> taskPercentageList = new HashMap<String, Integer>();
@@ -59,10 +74,9 @@ public class ProjectOnboardingConstant {
 		taskPercentageList.put("done", 100);
 		TASK_STATUS_PERCENTAGE = Collections.unmodifiableMap(taskPercentageList);
 	}
-	
-	public static String getFileNameForExcelReport(String projectId, String userId) {
-		return "D:\\StatusReports\\StatusReport"+"_"+projectId+"_"+userId+".xls";
-	}
-	
-}
 
+	public static String getFileNameForExcelReport(String projectId, String userId) {
+		return "D:\\StatusReports\\StatusReport" + "_" + projectId + "_" + userId + ".xls";
+	}
+
+}

@@ -28,7 +28,7 @@ import com.project.onboarding.service.ProjectOnboardingService;
  */
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/project-onboarding")
 public class ProjectOnboardingController {
 
 	@Autowired
@@ -55,12 +55,10 @@ public class ProjectOnboardingController {
 					new ResponsePayLoad(projects, ProjectOnboardingConstant.API_GET_PROJECTS_SUCCESS, ""),
 					HttpStatus.FOUND);
 		} catch (ProjectOnboardingException ex) {
-
 			log.error("Inside project onboarding controller getProjects ProjectOnboardingException catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getErrorMessage()),
 					HttpStatus.CONFLICT);
 		} catch (Exception ex) {
-
 			log.error("Inside project onboarding controller getProjects Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,12 +86,10 @@ public class ProjectOnboardingController {
 					HttpStatus.FOUND);
 
 		} catch (ProjectOnboardingException ex) {
-
 			log.error("Inside project onboarding controller getUsers ProjectOnboardingException catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getErrorMessage()),
 					HttpStatus.CONFLICT);
 		} catch (Exception ex) {
-
 			log.error("Inside project onboarding controller getUsers Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -106,13 +102,11 @@ public class ProjectOnboardingController {
 	 * @description : Show Task List associated with Project and Resource
 	 */
 
-	@GetMapping("/viewTasks/{projectId}/{resourceId}")
+	@GetMapping("/view-tasks/{projectId}/{resourceId}")
 	public ResponseEntity<ResponsePayLoad> getAllTasks(@PathVariable String projectId,
 			@PathVariable String resourceId) {
 		try {
 			log.info("In fetch Task controller");
-			// List<TaskDetails> allTasks =
-			// projectOnboardingService.fetchTaskList(projectId,resourceId);
 
 			List<Object> allTasks = new ArrayList<Object>();
 			allTasks.addAll(projectOnboardingService.fetchTaskList(projectId, resourceId));
@@ -124,7 +118,6 @@ public class ProjectOnboardingController {
 			log.warn("Exception while fetching Task List");
 			return new ResponseEntity<ResponsePayLoad>(
 					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.CONFLICT);
-
 		} catch (Exception ex) {
 			log.error("Inside project onboarding controller getAllTasks Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
@@ -138,19 +131,17 @@ public class ProjectOnboardingController {
 	 * @description : Save Task Status based on User and project Tasks.
 	 */
 
-	@PutMapping("/saveTaskStatus")
+	@PutMapping("/save-task-status")
 	public ResponseEntity<ResponsePayLoad> saveTaskStatus(@RequestBody SaveTaskStatusRequest saveTaskStatusRequest) {
 		try {
 			log.info("In save status controller");
-			// List<TaskDetails> taskDetailsList =
-			// projectOnboardingService.saveStatus(saveTaskStatusRequest);
+
 			List<Object> taskDetailsList = new ArrayList<Object>();
 			taskDetailsList.addAll(projectOnboardingService.saveStatus(saveTaskStatusRequest));
 
 			return new ResponseEntity<ResponsePayLoad>(
 					new ResponsePayLoad(taskDetailsList, ProjectOnboardingConstant.TASKSTATUS_SAVE_SUCCESS, ""),
 					HttpStatus.OK);
-
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.warn("Exception while saving task status");
 			return new ResponseEntity<ResponsePayLoad>(
@@ -158,6 +149,35 @@ public class ProjectOnboardingController {
 		} catch (Exception ex) {
 			log.error("Inside project onboarding controller saveTaskStatus Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * Description : API for fetch task status
+	 * 
+	 * @param
+	 * @return: List of Types object, ProjectOnboardingException, Exception
+	 */
+	@GetMapping("/fetch-task-status")
+	public ResponseEntity<ResponsePayLoad> fetchAllTaskStatus() {
+		try {
+			log.info("Starting of fetch all task status");
+
+			List<Object> statusList = new ArrayList<Object>();
+			statusList.addAll(projectOnboardingService.getAllTaskStatus());
+
+			log.info("Return the task details");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(statusList, ProjectOnboardingConstant.TASKSTATUS_FETCH_SUCCESS, ""),
+					HttpStatus.OK);
+		} catch (ProjectOnboardingException projectOnboardingException) {
+			log.error("The task status list is empty");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.CONFLICT);
+		} catch (Exception exception) {
+			log.error("Fetch status list failed");
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", exception.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

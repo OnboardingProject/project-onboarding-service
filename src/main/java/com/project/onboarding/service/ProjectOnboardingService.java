@@ -52,7 +52,7 @@ public class ProjectOnboardingService {
 	 * @description Fetch all the projects assigned to the particular user
 	 */
 
-	public List<ProjectDetailsResponse> getProjectsBasedOnUser(String userId) {
+	public List<ProjectDetailsResponse> getProjectsBasedOnUser(String userId) throws Exception{
 
 		log.info("Inside the get Project list service");
 
@@ -121,7 +121,7 @@ public class ProjectOnboardingService {
 	 * @description Fetch all the resources assigned to the particular project
 	 */
 
-	public List<UserDetailsResponse> getUsersBasedOnProject(String projectId) {
+	public List<UserDetailsResponse> getUsersBasedOnProject(String projectId) throws Exception{
 
 		log.info("Inside the get user list service");
 
@@ -196,8 +196,8 @@ public class ProjectOnboardingService {
 
 	public List<TaskDetails> fetchTaskList(String projectId, String resourceId) {
 		log.info("In fetch task list Service");
-		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(Criteria.where("userId").is(resourceId),
-				Criteria.where("projectIds.projectId").is(projectId)));
+		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(
+				Criteria.where("userId").is(resourceId), Criteria.where("projectIds.projectId").is(projectId)));
 
 		List<User> users = mongoTemplate.find(query, User.class);
 		if (!CollectionUtils.isEmpty(users)) {
@@ -220,8 +220,9 @@ public class ProjectOnboardingService {
 
 	public List<TaskDetails> saveStatus(SaveTaskStatusRequest saveTaskStatusRequest) {
 		log.info("Method for saving the task status");
-		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(Criteria.where("userId").is(saveTaskStatusRequest.getUserId()),
-				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId())));
+		Query query = projectOnboardingUtil
+				.createQuery(new Criteria().andOperator(Criteria.where("userId").is(saveTaskStatusRequest.getUserId()),
+						Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId())));
 
 		List<User> users = mongoTemplate.find(query, User.class);
 
@@ -248,5 +249,25 @@ public class ProjectOnboardingService {
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
 		}
 
+	}
+
+	/**
+	 * @param
+	 * @return List of Types object
+	 * @throws ProjectOnboardingException
+	 * @description Fetch all task status
+	 */
+	public List<Types> getAllTaskStatus() {
+		log.info("Staring of fetch all task status");
+		Query query = projectOnboardingUtil.createQuery(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS));
+		List<Types> taskStatusList = mongoTemplate.find(query, Types.class);
+		
+		if (!CollectionUtils.isEmpty(taskStatusList)) {
+			log.info("Display all the task status");
+			return taskStatusList;
+		} else {
+			log.error("The task list is empty");
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.STATUS_LIST_EMPTY);
+		}
 	}
 }
