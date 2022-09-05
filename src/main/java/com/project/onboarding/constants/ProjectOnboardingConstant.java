@@ -45,12 +45,18 @@ public class ProjectOnboardingConstant {
 	public static final String ROLE = "ROLE";
 	
 	public static final String RESOURCE = "Resource";
+	
+	public static final String TASKLIST_NOT_FOUND = "Project or User or Tasks associated are not found";
+	
+	public static final String TASKLIST_FETCH_SUCCESS = "Task list fetched successfully";
+	
+	public static final String TASKSTATUS_SAVE_SUCCESS = "Task Status saved successfully";
 
 	static {
 		Map<String, Integer> taskPercentageList = new HashMap<String, Integer>();
-		taskPercentageList.put("Yet to start", 0);
-		taskPercentageList.put("In-progress", 50);
-		taskPercentageList.put("Done", 100);
+		taskPercentageList.put("yet-to-start", 0);
+		taskPercentageList.put("in-progress", 50);
+		taskPercentageList.put("done", 100);
 		TASK_STATUS_PERCENTAGE = Collections.unmodifiableMap(taskPercentageList);
 	}
 	

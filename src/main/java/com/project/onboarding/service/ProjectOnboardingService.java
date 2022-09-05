@@ -11,13 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Project;
+import com.project.onboarding.model.ProjectTaskDetails;
+import com.project.onboarding.model.TaskDetails;
 import com.project.onboarding.model.Types;
 import com.project.onboarding.model.User;
+import com.project.onboarding.request.SaveTaskStatusRequest;
+import com.project.onboarding.request.TaskStatusRequest;
 import com.project.onboarding.response.ProjectDetailsResponse;
 import com.project.onboarding.response.UserDetailsResponse;
 import com.project.onboarding.util.ProjectOnboardingUtil;
@@ -33,7 +39,7 @@ public class ProjectOnboardingService {
 
 	@Autowired
 	MongoTemplate mongoTemplate;
-	
+
 	@Autowired
 	ProjectOnboardingUtil projectOnboardingUtil;
 
@@ -79,7 +85,7 @@ public class ProjectOnboardingService {
 	 * @throws ProjectOnboardingException
 	 * @description Fetch project names by using project id.
 	 */
-	
+
 	public ProjectDetailsResponse getProjectNames(String projectId) {
 
 		log.info("Inside getProjectNames method");
@@ -147,7 +153,7 @@ public class ProjectOnboardingService {
 	 * @return UserDetailsResponse object
 	 * @description Check whether the given user is a resource or not.
 	 */
-	
+
 	public UserDetailsResponse getResource(String userId) {
 
 		log.info("Inside the getResource method");
@@ -181,4 +187,66 @@ public class ProjectOnboardingService {
 		}
 	}
 
+	/**
+	 * @param projectId, resourceId
+	 * @return Task List object
+	 * @throws ProjectOnboardingException
+	 * @description : Show Task List associated with Project and Resource
+	 */
+
+	public List<TaskDetails> fetchTaskList(String projectId, String resourceId) {
+		log.info("In fetch task list Service");
+		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(Criteria.where("userId").is(resourceId),
+				Criteria.where("projectIds.projectId").is(projectId)));
+
+		List<User> users = mongoTemplate.find(query, User.class);
+		if (!CollectionUtils.isEmpty(users)) {
+			List<ProjectTaskDetails> projectIds1 = users.get(0).getProjectIds();
+			List<TaskDetails> tasks = projectIds1.get(0).getTasks();
+			log.info("Task fetched successfully");
+			return tasks;
+		} else {
+			log.error("User or Project or Tasks associated are not found, fetching task list failed");
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND);
+		}
+	}
+
+	/**
+	 * @param projectId, userId, taskId, taskStatus
+	 * @return Task List object
+	 * @throws ProjectOnboardingException
+	 * @description : Save Task Status based on User and project Tasks.
+	 */
+
+	public List<TaskDetails> saveStatus(SaveTaskStatusRequest saveTaskStatusRequest) {
+		log.info("Method for saving the task status");
+		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(Criteria.where("userId").is(saveTaskStatusRequest.getUserId()),
+				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId())));
+
+		List<User> users = mongoTemplate.find(query, User.class);
+
+		if (!CollectionUtils.isEmpty(users)) {
+			List<ProjectTaskDetails> projectIds1 = users.get(0).getProjectIds();
+			List<TaskDetails> tasks = projectIds1.get(0).getTasks();
+			for (TaskStatusRequest taskStatusRequest : saveTaskStatusRequest.getTaskStatusRequest()) {
+
+				List<TaskDetails> taskWithGivenTaskId = tasks.stream()
+						.filter(s -> s.getTaskId() == taskStatusRequest.getTaskId()).collect(Collectors.toList());
+				if (!CollectionUtils.isEmpty(taskWithGivenTaskId)) {
+					taskWithGivenTaskId.get(0).setTaskStatus(taskStatusRequest.getTaskStatus());
+					Update update = new Update();
+					update.set("projectIds", projectIds1);
+					mongoTemplate.updateFirst(query, update, User.class);
+				} else {
+					log.error("Task not found");
+					throw new ProjectOnboardingException(ProjectOnboardingConstant.TASK_NOT_FOUND);
+				}
+			}
+			return tasks;
+		} else {
+			log.error("ProjectId not found");
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
+		}
+
+	}
 }

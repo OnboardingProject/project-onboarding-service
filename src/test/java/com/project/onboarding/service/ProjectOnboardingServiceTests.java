@@ -182,6 +182,35 @@ public class ProjectOnboardingServiceTests {
 		assertEquals(ProjectOnboardingConstant.PROJECT_NOT_FOUND, actualErrormsg.getErrorMessage());
 	}
 	
+	@Test
+	public void getTasksListByProjectIdUserIdSuccessTest() throws Exception {
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is("P_001"))), User.class)).thenReturn(users);
+		
+		setQueryAndCriteriaForFetchTaskList();
+		List<TaskDetails> resultList = projectOnboardingService.fetchTaskList("P_001", "U11");
+		assertEquals(taskDetailsList, resultList);
+	}
+
+	@Test
+	public void getTasksListByProjectIdUserIdSFailureTest() {
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is("P_001"))), User.class)).thenReturn(users);
+
+		assertThrows(ProjectOnboardingException.class, () -> {
+			projectOnboardingService.fetchTaskList("P_001", "U11");
+		});
+	}
+	
+	public void setQueryAndCriteriaForFetchTaskList() {
+		Criteria criteria = new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is("P_001"));
+		Query query = new Query();
+		query.addCriteria(criteria);
+		
+		when(projectOnboardingUtil.createQuery(criteria)).thenReturn(query);
+	}
+	
 	public void setQueryAndCriteria() {
 		Criteria criteria = Criteria.where("userId").is("U11");
 		Query query = new Query();

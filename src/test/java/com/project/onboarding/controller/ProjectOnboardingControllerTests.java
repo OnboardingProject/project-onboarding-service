@@ -1,12 +1,15 @@
 package com.project.onboarding.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,11 +19,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
+import com.project.onboarding.model.TaskDetails;
+import com.project.onboarding.request.SaveTaskStatusRequest;
+import com.project.onboarding.request.TaskStatusRequest;
 import com.project.onboarding.response.ProjectDetailsResponse;
 import com.project.onboarding.response.UserDetailsResponse;
 import com.project.onboarding.service.ProjectOnboardingService;
@@ -50,6 +58,11 @@ public class ProjectOnboardingControllerTests {
 	UserDetailsResponse userDetails = new UserDetailsResponse();
 	List<UserDetailsResponse> userDetailsList = new ArrayList<>();
 	
+	TaskDetails taskDetails = new TaskDetails();
+	List<TaskDetails> taskList = new ArrayList<TaskDetails>();
+	
+	SaveTaskStatusRequest saveTaskStatusRequest;
+	
 	@BeforeEach
 	public void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(projectOnboardingController).build();
@@ -62,8 +75,19 @@ public class ProjectOnboardingControllerTests {
 		userDetails.setUserName("Anu Mathew");
 		userDetailsList.add(userDetails);
 		
+		taskDetails.setTaskId(1);
+		taskDetails.setTaskName("Laptop Allocation");
+		taskDetails.setTaskStatus("Done");
+		
+		taskList.add(taskDetails);
+		
+		List<TaskStatusRequest> taskStatusRequests = new ArrayList<TaskStatusRequest>();
+		taskStatusRequests.add(new TaskStatusRequest(1, "In-progress"));
+		
+		saveTaskStatusRequest = new SaveTaskStatusRequest("P_001", "U11", taskStatusRequests);
 	}
 	
+	@DisplayName("JUnit test for get projects based on user success scenario ")
 	@Test
 	public void getProjectsBasedOnUserSuccessTest() throws Exception {
 		
@@ -74,6 +98,7 @@ public class ProjectOnboardingControllerTests {
 				.andExpect(MockMvcResultMatchers.status().isFound());	
 	}
 	
+	@DisplayName("JUnit test for get projects based on user failure scenario ")
 	@Test
 	public void getProjectsBasedOnUserFailureTest() throws Exception {
 		
@@ -82,12 +107,10 @@ public class ProjectOnboardingControllerTests {
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/projects/U11")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isConflict())
-				//.andExpect(content().string(ProjectOnboardingConstant.USER_NOT_FOUND));
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.USER_NOT_FOUND));
-		
-		
 	}
 	
+	@DisplayName("JUnit test for get resources based on project success scenario ")
 	@Test
 	public void getResourcesBasedOnProjectSuccessTest() throws Exception {
 		
@@ -98,6 +121,7 @@ public class ProjectOnboardingControllerTests {
 				.andExpect(MockMvcResultMatchers.status().isFound());			
 	}
 	
+	@DisplayName("JUnit test for get resources based on project failure scenario ")
 	@Test
 	public void getResourcesBasedOnProjectFailureTest() throws Exception {
 		
@@ -106,9 +130,66 @@ public class ProjectOnboardingControllerTests {
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/resources/P_001")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isConflict())
-				//.andExpect(content().string(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 
+	}
+	
+	@DisplayName("JUnit test for fetching task list success scenario ")
+	@Test
+	public void getAllTasklistSuccessTest() throws Exception {
+		when(projectOnboardingService.fetchTaskList("P_001", "U11")).thenReturn(taskList);
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/viewTasks/P_001/U11").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}
+
+	@DisplayName("JUnit test for fetching task list failure scenario ")
+	@Test
+	public void getAllTasklistFailureTest() throws Exception {
+		when(projectOnboardingService.fetchTaskList("P_001", "U11")).thenThrow(
+				new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/viewTasks/P_001/U11").contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(taskList)))
+				.andExpect(MockMvcResultMatchers.status().isConflict())
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+		verify(projectOnboardingService, times(1)).fetchTaskList("P_001", "U11");
+	}
+
+	@DisplayName("JUnit test for saving task status success scenario ")
+	@Test
+	public void saveTaskStatusSuccessTest() throws Exception {
+		when(projectOnboardingService.saveStatus(any())).thenReturn(taskList);
+		
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/saveTaskStatus").contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(saveTaskStatusRequest)))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+		
+	}
+	
+	@DisplayName("JUnit test for saving task status failure scenario ")
+	@Test
+	public void saveTaskStatusFailureTest() throws Exception {
+		when(projectOnboardingService.saveStatus(any())).thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+		
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/saveTaskStatus").contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(saveTaskStatusRequest)))
+		.andExpect(MockMvcResultMatchers.status().isConflict())
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+		verify(projectOnboardingService, times(1)).saveStatus(any());
+
+    }
+	
+
+	public static String asJsonString(final Object obj) {
+		try {
+			return new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
 	}
 
 }

@@ -10,11 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
+import com.project.onboarding.request.SaveTaskStatusRequest;
 import com.project.onboarding.response.ResponsePayLoad;
 import com.project.onboarding.service.ProjectOnboardingService;
 
@@ -47,7 +50,7 @@ public class ProjectOnboardingController {
 			log.info("Inside project onboarding controller getProjects try block");
 			List<Object> projects = new ArrayList<Object>();
 			projects.addAll(projectOnboardingService.getProjectsBasedOnUser(userId));
-			
+
 			return new ResponseEntity<ResponsePayLoad>(
 					new ResponsePayLoad(projects, ProjectOnboardingConstant.API_GET_PROJECTS_SUCCESS, ""),
 					HttpStatus.FOUND);
@@ -60,7 +63,7 @@ public class ProjectOnboardingController {
 
 			log.error("Inside project onboarding controller getProjects Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
-					HttpStatus.INTERNAL_SERVER_ERROR);		
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -72,7 +75,7 @@ public class ProjectOnboardingController {
 	 */
 
 	@GetMapping("/resources/{projectId}")
-	public ResponseEntity<?> getUsers(@PathVariable String projectId) {
+	public ResponseEntity<ResponsePayLoad> getUsers(@PathVariable String projectId) {
 
 		try {
 
@@ -92,6 +95,68 @@ public class ProjectOnboardingController {
 		} catch (Exception ex) {
 
 			log.error("Inside project onboarding controller getUsers Exception catch block");
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * @param projectId, resourceId
+	 * @return ResponseEntity<TaskDetails>
+	 * @description : Show Task List associated with Project and Resource
+	 */
+
+	@GetMapping("/viewTasks/{projectId}/{resourceId}")
+	public ResponseEntity<ResponsePayLoad> getAllTasks(@PathVariable String projectId,
+			@PathVariable String resourceId) {
+		try {
+			log.info("In fetch Task controller");
+			// List<TaskDetails> allTasks =
+			// projectOnboardingService.fetchTaskList(projectId,resourceId);
+
+			List<Object> allTasks = new ArrayList<Object>();
+			allTasks.addAll(projectOnboardingService.fetchTaskList(projectId, resourceId));
+
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(allTasks, ProjectOnboardingConstant.TASKLIST_FETCH_SUCCESS, ""), HttpStatus.OK);
+
+		} catch (ProjectOnboardingException projectOnboardingException) {
+			log.warn("Exception while fetching Task List");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.CONFLICT);
+
+		} catch (Exception ex) {
+			log.error("Inside project onboarding controller getAllTasks Exception catch block");
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * @param projectId, userId, taskId, taskStatus
+	 * @return ResponseEntity<TaskDetails>
+	 * @description : Save Task Status based on User and project Tasks.
+	 */
+
+	@PutMapping("/saveTaskStatus")
+	public ResponseEntity<ResponsePayLoad> saveTaskStatus(@RequestBody SaveTaskStatusRequest saveTaskStatusRequest) {
+		try {
+			log.info("In save status controller");
+			// List<TaskDetails> taskDetailsList =
+			// projectOnboardingService.saveStatus(saveTaskStatusRequest);
+			List<Object> taskDetailsList = new ArrayList<Object>();
+			taskDetailsList.addAll(projectOnboardingService.saveStatus(saveTaskStatusRequest));
+
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(taskDetailsList, ProjectOnboardingConstant.TASKSTATUS_SAVE_SUCCESS, ""),
+					HttpStatus.OK);
+
+		} catch (ProjectOnboardingException projectOnboardingException) {
+			log.warn("Exception while saving task status");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.CONFLICT);
+		} catch (Exception ex) {
+			log.error("Inside project onboarding controller saveTaskStatus Exception catch block");
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", ex.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}

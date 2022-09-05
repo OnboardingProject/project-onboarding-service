@@ -293,7 +293,7 @@ public class OnboardingStatusService {
 		if (projectTaskDetails.size() > 0 && projectTaskDetails.get(0).getTasks().size() > 0) {
 			long noOfTasks = projectTaskDetails.get(0).getTasks().stream().count();
 			int sumOfPercentage = projectTaskDetails.get(0).getTasks().stream()
-					.map(task -> ProjectOnboardingConstant.TASK_STATUS_PERCENTAGE.get(task.getTaskStatus()))
+					.map(task -> ProjectOnboardingConstant.TASK_STATUS_PERCENTAGE.get(task.getTaskStatus().toLowerCase().replaceAll("[^A-Za-z]", "-")))
 					.collect(Collectors.summingInt(Integer::intValue));
 
 			taskPercentage = (sumOfPercentage * 100 / (noOfTasks * 100));
