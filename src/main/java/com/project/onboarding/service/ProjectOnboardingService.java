@@ -40,7 +40,7 @@ public class ProjectOnboardingService {
 	 * @throws ProjectOnboardingException
 	 * @description Fetch all task status
 	 */
-	public List<Types> getAllTaskStatus() {
+	public List<Types> getAllTaskStatus() throws Exception {
 		logger.info("Staring of fetch all task status");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("typeName").is(ProjectOnboardingConstant.TYPE_NAME));

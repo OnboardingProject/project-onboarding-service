@@ -53,7 +53,7 @@ public class ProjectOnboardingController {
 
 		catch (ProjectOnboardingException projectOnboardingException) {
 			logger.error("The task status list is empty");
-			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "", ProjectOnboardingConstant.LIST_EMPTY),
+			return new ResponseEntity<TypesPayload>(new TypesPayload(null, "",projectOnboardingException.getErrorMessage()),
 					HttpStatus.CONFLICT);
 		}
 		catch(Exception exception) {

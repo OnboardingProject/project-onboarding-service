@@ -18,6 +18,9 @@ public  class  ProjectOnboardingConstant {
 		  public static final String NOTASKFOUND="No task found";
 		  
 		  public static final String DELETESUCCESS="Successfully delete the tasks"; 
+		  public static final String INTERNALSERVERERROR="Internal server error"; 
+		  public static final String NO_USER_FOUND="No user found"; 
+
 
 }
 

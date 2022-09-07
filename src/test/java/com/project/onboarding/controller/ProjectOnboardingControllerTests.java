@@ -74,14 +74,29 @@ public class ProjectOnboardingControllerTests{
 		@Test
 		    public void testtestFetchAllTaskStatusFailure_ThenThrowException() throws Exception {
  
-		      when(projectOnboardingService.getAllTaskStatus()).thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY,HttpStatus.NOT_FOUND)); 
-		        mockMvc.perform(MockMvcRequestBuilders
+		    when(projectOnboardingService.getAllTaskStatus()).thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.LIST_EMPTY,HttpStatus.CONFLICT)); 
+			mockMvc.perform(MockMvcRequestBuilders
 		                .get("/projectOnboarding/fetchTaskStatus")
 		                .contentType(MediaType.APPLICATION_JSON)
 		                .content(asJsonString(types)))
 		                .andExpect(status().isConflict())
 		                .andDo(MockMvcResultHandlers.print())
 		                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.LIST_EMPTY));
+		               verify(projectOnboardingService, times(1)).getAllTaskStatus(); 
+		        
+		    }
+		
+		@DisplayName("JUnit test for getAllTaskStatus internal server failure scenario ")
+		@Test
+		    public void testtestFetchAllTaskStatusInternalServerFailure_ThenThrowException() throws Exception {
+   		      when(projectOnboardingService.getAllTaskStatus()).thenThrow(new Exception(ProjectOnboardingConstant.INTERNALSERVERERROR)); 
+		        mockMvc.perform(MockMvcRequestBuilders
+		                .get("/projectOnboarding/fetchTaskStatus")
+		                .contentType(MediaType.APPLICATION_JSON)
+		                .content(asJsonString(types)))
+		                .andExpect(status().isInternalServerError())
+		                .andDo(MockMvcResultHandlers.print())
+		                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNALSERVERERROR));
 		               verify(projectOnboardingService, times(1)).getAllTaskStatus(); 
 		        
 		    }

@@ -39,7 +39,7 @@ public class ProjectOnboardingServiceTests {
 
 	@DisplayName("JUnit test for GetAllTaskStatus success scenario ")
 	@Test
-	public void testGetAllTaskStatusSuccess() {
+	public void testGetAllTaskStatusSuccess() throws Exception {
 
 		Types types = new Types();
 		types.setTypeName("TASK_STATUS");

@@ -82,11 +82,26 @@ public class ProjectTasksControllerTests {
 		Task tasks = new Task();
 
 		when(projecTaskService.getProjectTasksByProjectId("P_001")).thenThrow(
-				new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.NOT_FOUND));
+				new ProjectOnboardingException(ProjectOnboardingConstant.PROJECTIDNOTFOUND, HttpStatus.CONFLICT));
 		mockMvc.perform(MockMvcRequestBuilders.get("/projectTask/fetchProjectTask/P_001")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(tasks))).andExpect(status().isConflict())
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
 						.value(ProjectOnboardingConstant.PROJECTIDNOTFOUND));
+		verify(projecTaskService, times(1)).getProjectTasksByProjectId("P_001");
+
+	}
+
+	
+	@DisplayName("JUnit test for getProjectTasksByProjectId internal server error scenario ")
+	@Test
+	public void getProjectTasksByProjectIdInternalServerFailuerTest() throws Exception {
+
+		Task tasks = new Task();
+    	when(projecTaskService.getProjectTasksByProjectId("P_001")).thenThrow(new Exception(ProjectOnboardingConstant.INTERNALSERVERERROR));
+		mockMvc.perform(MockMvcRequestBuilders.get("/projectTask/fetchProjectTask/P_001")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(tasks))).andExpect(status().isInternalServerError())
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.INTERNALSERVERERROR));
 		verify(projecTaskService, times(1)).getProjectTasksByProjectId("P_001");
 
 	}

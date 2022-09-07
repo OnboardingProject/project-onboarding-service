@@ -32,7 +32,7 @@ public class ProjectTasksServiceTests {
 
 	@DisplayName("JUnit test for getProjectTasksByProjectId success scenario ")
 	@Test
-	public void getProjectTasksByProjectIdSuccessTest() {
+	public void getProjectTasksByProjectIdSuccessTest() throws Exception {
 		List<Project> projectList = new ArrayList<Project>();
 
 		List<Task> taskList = new ArrayList<Task>();
