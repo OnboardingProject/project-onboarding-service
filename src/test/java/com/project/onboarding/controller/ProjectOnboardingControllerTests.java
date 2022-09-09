@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,24 +139,24 @@ public class ProjectOnboardingControllerTests {
 	@DisplayName("Testcases for getProjectsBasedOnUser API failure scenarios")
     @Test
     public void getProjectsBasedOnUserFailureThrowExceptionTest() throws Exception {
-        when(projectOnboardingService.getProjectsBasedOnUser(any())).thenThrow(new Exception("Internal Server Error"));
+        when(projectOnboardingService.getProjectsBasedOnUser(any())).thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
         
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/project-onboarding/projects/U11")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
                 
     }
 	
 	@DisplayName("Testcases for getResourcesBasedOnProject API failure scenarios")
     @Test
     public void getResourcesBasedOnProjectFailureThrowExceptionTest() throws Exception {
-        when(projectOnboardingService.getUsersBasedOnProject(any())).thenThrow(new Exception("Internal Server Error"));
+        when(projectOnboardingService.getUsersBasedOnProject(any())).thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
         
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/project-onboarding/resources/P_001")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
    }
 	 
 	@DisplayName("JUnit test for fetching task list success scenario ")
@@ -236,6 +237,45 @@ public class ProjectOnboardingControllerTests {
 		verify(projectOnboardingService, times(1)).getAllTaskStatus();
 
 	}
+
+	@DisplayName("JUnit test for saveTaskStatus API failure scenario when throws Exception")
+	@Test
+	public void givenSaveStatusRequest_whenSaveTaskStatus_thenThrowException() throws Exception {
+		when(projectOnboardingService.saveStatus(any())).thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.put("/api/v1/project-onboarding/save-task-status").contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(saveTaskStatusRequest)))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		verify(projectOnboardingService, times(1)).saveStatus(any());
+	}
+	
+	@DisplayName("JUnit test for getAllTasks API failure scenario when throws Exception")
+	@Test
+	public void givenProjectIdAndUserId_whenGetAllTasks_thenThrowException() throws Exception {
+		when(projectOnboardingService.fetchTaskList(any(), any())).thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/api/v1/project-onboarding/view-tasks/P_001/U11").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		verify(projectOnboardingService, times(1)).fetchTaskList(any(), any());
+	}
+	
+	@DisplayName("JUnit test for getAllTaskStatus internal server failure scenario ")
+    @Test
+        public void testtestFetchAllTaskStatusInternalServerFailure_ThenThrowException() throws Exception {
+             when(projectOnboardingService.getAllTaskStatus()).thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+            mockMvc.perform(
+            		MockMvcRequestBuilders.get("/api/v1/project-onboarding/fetch-task-status").contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(types)))
+                    .andExpect(status().isInternalServerError())
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+                  
+            verify(projectOnboardingService, times(1)).getAllTaskStatus();
+        }
 
 	public static String asJsonString(final Object obj) {
 		try {

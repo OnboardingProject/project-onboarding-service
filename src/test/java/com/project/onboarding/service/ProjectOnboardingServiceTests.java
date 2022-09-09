@@ -28,6 +28,8 @@ import com.project.onboarding.model.Task;
 import com.project.onboarding.model.TaskDetails;
 import com.project.onboarding.model.Types;
 import com.project.onboarding.model.User;
+import com.project.onboarding.request.SaveTaskStatusRequest;
+import com.project.onboarding.request.TaskStatusRequest;
 import com.project.onboarding.response.ProjectDetailsResponse;
 import com.project.onboarding.response.UserDetailsResponse;
 import com.project.onboarding.util.ProjectOnboardingUtil;
@@ -73,6 +75,8 @@ public class ProjectOnboardingServiceTests {
 
 	UserDetailsResponse expectedUserDetails = new UserDetailsResponse();
 	List<UserDetailsResponse> expectedUserDetailsList = new ArrayList<>();
+	
+	TaskDetails taskDetailsExpected;
 
 	@BeforeEach
 	public void setup() {
@@ -117,7 +121,7 @@ public class ProjectOnboardingServiceTests {
 
 	@DisplayName("JUnit test for getProjectsBasedOnUser success scenario ")
 	@Test
-	public void getProjectsBasedOnUserSuccessTest() throws Exception{
+	public void getProjectsBasedOnUserSuccessTest() throws Exception {
 		setQueryAndCriteria();
 		when(mongoTemplate.findOne(Query.query(Criteria.where("userId").is("U11")), User.class)).thenReturn(user);
 		when(mongoTemplate.findOne(Query.query(Criteria.where("projectId").is("P_001")), Project.class))
@@ -164,7 +168,7 @@ public class ProjectOnboardingServiceTests {
 
 	@DisplayName("JUnit test for getUsersBasedOnProject success scenario ")
 	@Test
-	public void getUsersBasedOnProjectSuccessTest() throws Exception{
+	public void getUsersBasedOnProjectSuccessTest() throws Exception {
 		setQueryAndCriteria();
 		when(mongoTemplate.findOne(Query.query(Criteria.where("projectId").is("P_001")), Project.class))
 				.thenReturn(project);
@@ -218,19 +222,20 @@ public class ProjectOnboardingServiceTests {
 
 	@DisplayName("JUnit test for GetAllTaskStatus success scenario ")
 	@Test
-	public void testGetAllTaskStatusSuccess() {
+	public void testGetAllTaskStatusSuccess() throws Exception {
 		Types types = new Types();
 		types.setTypeName("TASK_STATUS");
 		types.setTypeId(9);
 		types.setTypeDesc("In-progress");
 		types.setPermission(null);
-		
+
 		List<Types> statusList = new ArrayList<Types>();
 		statusList.add(types);
 
 		setQueryAndCriteriaForGetAllTaskStatus();
-		when(mongoTemplate.find(Query.query(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS)), Types.class)).thenReturn(statusList);
-		
+		when(mongoTemplate.find(Query.query(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS)),
+				Types.class)).thenReturn(statusList);
+
 		List<Types> types1 = projectOnboardingService.getAllTaskStatus();
 		assertEquals(statusList, types1);
 	}
@@ -243,15 +248,111 @@ public class ProjectOnboardingServiceTests {
 		types.setTypeId(9);
 		types.setTypeDesc("In-progress");
 		types.setPermission(null);
-		
+
 		List<Types> statusList = new ArrayList<Types>();
 
 		setQueryAndCriteriaForGetAllTaskStatus();
-		when(mongoTemplate.find(Query.query(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS)), Types.class)).thenReturn(statusList);
-		
+		when(mongoTemplate.find(Query.query(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS)),
+				Types.class)).thenReturn(statusList);
+
 		assertThrows(ProjectOnboardingException.class, () -> {
 			projectOnboardingService.getAllTaskStatus();
 		});
+
+	}
+
+	@Test
+	public void saveStatusTestSuccessTest() throws Exception{
+		List<TaskStatusRequest> taskRequest = new ArrayList<>();
+
+		SaveTaskStatusRequest saveTaskStatusRequest = new SaveTaskStatusRequest();
+		TaskStatusRequest taskStatusReq = new TaskStatusRequest();
+
+		taskStatusReq.setTaskId(1);
+		taskStatusReq.setTaskStatus("Done");
+
+		taskRequest.add(taskStatusReq);
+
+		saveTaskStatusRequest.setProjectId("P_001");
+		saveTaskStatusRequest.setUserId("U11");
+		saveTaskStatusRequest.setTaskStatusRequest(taskRequest);
+
+		taskDetailsExpected = new TaskDetails(1, "Seat allocation", "Done");
+		List<TaskDetails> taskDetailsExpectedList = new ArrayList<>();
+		taskDetailsExpectedList.add(taskDetailsExpected);
+		setQueryAndCriteriaForFetchTaskList();
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId()))), User.class))
+				.thenReturn(users);
+
+		List<TaskDetails> actualDetailsList = projectOnboardingService.saveStatus(saveTaskStatusRequest);
+
+		assertEquals(taskDetailsExpectedList.get(0).getTaskId(), actualDetailsList.get(0).getTaskId());
+		assertEquals(taskDetailsExpectedList.get(0).getTaskStatus(), actualDetailsList.get(0).getTaskStatus());
+
+	}
+
+	@Test
+	public void saveStatusTestFailureTest() {
+		List<TaskStatusRequest> taskRequest = new ArrayList<>();
+		users.clear();
+		SaveTaskStatusRequest saveTaskStatusRequest = new SaveTaskStatusRequest();
+		TaskStatusRequest taskStatusReq = new TaskStatusRequest();
+
+		taskStatusReq.setTaskId(1);
+		taskStatusReq.setTaskStatus("Done");
+
+		taskRequest.add(taskStatusReq);
+
+		saveTaskStatusRequest.setProjectId("P12");
+		saveTaskStatusRequest.setUserId("U11");
+		saveTaskStatusRequest.setTaskStatusRequest(taskRequest);
+
+		taskDetailsExpected = new TaskDetails(1, "Seat allocation", "Done");
+		List<TaskDetails> taskDetailsExpectedList = new ArrayList<>();
+		taskDetailsExpectedList.add(taskDetailsExpected);
+
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId()))), User.class))
+				.thenReturn(users);
+
+		ProjectOnboardingException actualErrormsg = assertThrows(ProjectOnboardingException.class, () -> {
+			projectOnboardingService.saveStatus(saveTaskStatusRequest);
+		});
+
+		assertEquals(ProjectOnboardingConstant.PROJECT_NOT_FOUND, actualErrormsg.getErrorMessage());
+
+	}
+
+	@Test
+	public void saveStatusTestFailureWhenNoTaskAssignedTest() {
+		List<TaskStatusRequest> taskRequest = new ArrayList<>();
+		taskDetailsList.clear();
+		SaveTaskStatusRequest saveTaskStatusRequest = new SaveTaskStatusRequest();
+		TaskStatusRequest taskStatusReq = new TaskStatusRequest();
+
+		taskStatusReq.setTaskId(1);
+		taskStatusReq.setTaskStatus("Done");
+
+		taskRequest.add(taskStatusReq);
+
+		saveTaskStatusRequest.setProjectId("P_001");
+		saveTaskStatusRequest.setUserId("U11");
+		saveTaskStatusRequest.setTaskStatusRequest(taskRequest);
+
+		taskDetailsExpected = new TaskDetails(1, "Seat allocation", "Done");
+		List<TaskDetails> taskDetailsExpectedList = new ArrayList<>();
+		taskDetailsExpectedList.add(taskDetailsExpected);
+		setQueryAndCriteriaForFetchTaskList();
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId()))), User.class))
+				.thenReturn(users);
+
+		ProjectOnboardingException actualErrormsg = assertThrows(ProjectOnboardingException.class, () -> {
+			projectOnboardingService.saveStatus(saveTaskStatusRequest);
+		});
+
+		assertEquals(ProjectOnboardingConstant.TASK_NOT_FOUND, actualErrormsg.getErrorMessage());
 
 	}
 
@@ -262,7 +363,7 @@ public class ProjectOnboardingServiceTests {
 
 		when(projectOnboardingUtil.createQuery(criteria)).thenReturn(query);
 	}
-	
+
 	public void setQueryAndCriteriaForFetchTaskList() {
 		Criteria criteria = new Criteria().andOperator(Criteria.where("userId").is("U11"),
 				Criteria.where("projectIds.projectId").is("P_001"));

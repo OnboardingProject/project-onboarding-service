@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.response.ProjectTasksOverviewResponse;
 import com.project.onboarding.response.StatusReportResponse;
@@ -89,12 +90,12 @@ public class OnboardingStatusControllerTests {
 	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_thenThrowProjectOnboardingException()
 			throws Exception {
 		when(onboardingStatusService.getPreviewStatusReport(any(), any()))
-				.thenThrow(new ProjectOnboardingException("Project Not Found"));
+				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 
 		mockMvc.perform(
 				MockMvcRequestBuilders.get("/api/v1/onboarding-status/preview-report/P_1/U13").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound()).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Project Not Found"));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 		verify(onboardingStatusService, times(1)).getPreviewStatusReport(any(), any());
 	}
 
@@ -103,12 +104,12 @@ public class OnboardingStatusControllerTests {
 	@Test
 	public void givenProjectIdAndUserId_whenGetPreviewStatusReport_thenThrowException() throws Exception {
 		when(onboardingStatusService.getPreviewStatusReport(any(), any()))
-				.thenThrow(new Exception("Internal Server Error"));
+				.thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 
 		mockMvc.perform(
 				MockMvcRequestBuilders.get("/api/v1/onboarding-status/preview-report/P_1/U13").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 		verify(onboardingStatusService, times(1)).getPreviewStatusReport(any(), any());
 	}
 	
@@ -130,26 +131,25 @@ public class OnboardingStatusControllerTests {
 	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_thenThrowProjectOnboardingException()
 			throws Exception {
 		when(onboardingStatusService.exportStatusReportInExcelFormat(any(), any()))
-				.thenThrow(new ProjectOnboardingException("Project Not Found"));
+				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 
 		mockMvc.perform(
 				MockMvcRequestBuilders.get("/api/v1/onboarding-status/export-report/P_1/U13").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound()).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Project Not Found"));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
 		verify(onboardingStatusService, times(1)).exportStatusReportInExcelFormat(any(), any());
 	}
 
 	@DisplayName("JUnit test for exportStatusReportInExcelFormat API failure scenarios")
-
 	@Test
 	public void givenProjectIdAndUserId_whenExportStatusReportInExcelFormat_thenThrowException() throws Exception {
 		when(onboardingStatusService.exportStatusReportInExcelFormat(any(), any()))
-				.thenThrow(new Exception("Internal Server Error"));
+				.thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 
 		mockMvc.perform(
 				MockMvcRequestBuilders.get("/api/v1/onboarding-status/export-report/P_1/U13").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Internal Server Error"));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 		verify(onboardingStatusService, times(1)).exportStatusReportInExcelFormat(any(), any());
 	}
 

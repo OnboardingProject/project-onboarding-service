@@ -50,7 +50,7 @@ public class ProjectTasksService {
 	 * @throws ProjectOnboardingException
 	 * @description Fetch all task based on projectId
 	 */
-	public List<Task> getProjectTasksByProjectId(String projectId) {
+	public List<Task> getProjectTasksByProjectId(String projectId) throws Exception {
 		log.info("Method for fetch the project task list started");
 
 		Query query = projectOnboardingUtil.createQuery(Criteria.where("projectId").is(projectId));
@@ -68,7 +68,7 @@ public class ProjectTasksService {
 	}
 
 	/* Method for Add New Task to a Project - Also handles edit task */
-	public Project addOrEditTask(ProjectTaskRequest projectTaskRequest) {
+	public Project addOrEditTask(ProjectTaskRequest projectTaskRequest) throws Exception{
 		log.info("In addOrEditTask Service");
 
 		/* Query to find the project exists */
@@ -143,16 +143,12 @@ public class ProjectTasksService {
 						}
 						projectTask.setTasks(userTaskList);
 					}
-
 				}
-
 				Update userUpdate = new Update();
 				userUpdate.set("projectIds", user.getProjectIds());
 				mongoTemplate.upsert(query, userUpdate, User.class);
-
 			}
 			return project.get(0);
-
 		} else {
 			log.warn("Project not found, Add/edit task failed");
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);

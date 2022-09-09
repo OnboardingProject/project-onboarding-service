@@ -52,7 +52,7 @@ public class ProjectTasksControllerTests {
 	List<Project> projectList = new ArrayList<Project>();
 	List<Task> taskList = new ArrayList<Task>();
 	ProjectTaskRequest projectTaskRequest;
-	
+
 	@BeforeEach
 	public void init() {
 		mockMvc = MockMvcBuilders.standaloneSetup(projectTasksController).build();
@@ -65,11 +65,11 @@ public class ProjectTasksControllerTests {
 		task = new Task(1, "Seat Allocation", "User Need Seat Allocation", "Software Engineer");
 		taskList.add(task);
 
-		project = new Project("P_001", "Employee Allocation", "Employee allocation Project", LocalDateTime.now(), "U1", "U12",
-				LocalDateTime.now(), userIds, taskList);
+		project = new Project("P_001", "Employee Allocation", "Employee allocation Project", LocalDateTime.now(), "U1",
+				"U12", LocalDateTime.now(), userIds, taskList);
 
 		projectList.add(project);
-		
+
 		projectTaskRequest = new ProjectTaskRequest("P_001", task);
 	}
 
@@ -101,10 +101,10 @@ public class ProjectTasksControllerTests {
 	@Test
 	public void addOrEditTaskSuccessTest() throws Exception {
 		task.setTaskId(0);
-		
+
 		when(projectTasksService.addOrEditTask(any())).thenReturn(project);
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task").contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(projectTaskRequest)))
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(projectTaskRequest)))
 				.andExpect(MockMvcResultMatchers.status().isCreated());
 
 	}
@@ -113,13 +113,44 @@ public class ProjectTasksControllerTests {
 	@Test
 	public void addOrEditTaskFailureTest() throws Exception {
 		task.setTaskId(0);
+
+		when(projectTasksService.addOrEditTask(any()))
+				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(projectTaskRequest)))
+				.andExpect(MockMvcResultMatchers.status().isNotFound()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+	}
+
+	@DisplayName("JUnit test for getProjectTasksByProjectId internal server error scenario ")
+	@Test
+	public void getProjectTasksByProjectIdInternalServerFailuerTest() throws Exception {
+		Task tasks = new Task();
+		when(projectTasksService.getProjectTasksByProjectId("P_001"))
+				.thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 		
-		when(projectTasksService.addOrEditTask(any())).thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/project-tasks/fetch-project-tasks/P_001")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(tasks)))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		verify(projectTasksService, times(1)).getProjectTasksByProjectId("P_001");
+	}
+
+	@DisplayName("JUnit test for addOrEditTasks internal server error scenario ")
+	@Test
+	public void addOrEditTasksInternalServerFailuerTest() throws Exception {
+		when(projectTasksService.addOrEditTask(any()))
+				.thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task").contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(projectTaskRequest)))
-				.andExpect(MockMvcResultMatchers.status().isNotFound())
-				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(projectTaskRequest)))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		verify(projectTasksService, times(1)).addOrEditTask(any());
 	}
 
 	public static String asJsonString(final Object obj) {

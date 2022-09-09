@@ -96,7 +96,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("JUnit test for getProjectTasksByProjectId success scenario ")
 	@Test
-	public void getProjectTasksByProjectIdSuccessTest() {
+	public void getProjectTasksByProjectIdSuccessTest() throws Exception{
 		setQueryCriteriaForProject();
 		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is("P_001")), Project.class)).thenReturn(projectList);
 		List<Task> resultList = projectTaskService.getProjectTasksByProjectId("P_001");
@@ -119,7 +119,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for add task success scenario")
 	@Test
-	public void testAddTasksSuccess() {
+	public void testAddTasksSuccess() throws Exception{
 		int value = 2;
 		
 		setQueryCriteriaForProject();
@@ -145,7 +145,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for add task for a user success scenario")
 	@Test
-	public void testAddTasksUserSuccess() {
+	public void testAddTasksUserSuccess() throws Exception{
 		int value = 2;
 
 		setQueryCriteriaForProject();
@@ -165,7 +165,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for add task for a user failure scenario if project id not found for the user")
 	@Test
-	public void testAddTasksUserFailureIfProjectIdNotFoundOnUser() {
+	public void testAddTasksUserFailureIfProjectIdNotFoundOnUser() throws Exception{
 		int value = 2;
 		Criteria criteria = Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
 				.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId()));
@@ -189,7 +189,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for edit task success scenario")
 	@Test
-	public void testEditTasksProjectSuccess() {
+	public void testEditTasksProjectSuccess() throws Exception{
 		setQueryCriteriaForProject();
 		when(mongoTemplate.find(Query.query(Criteria.where("projectId").is(projectTaskRequest.getProjectId())),
 				Project.class)).thenReturn(projectList);
@@ -221,7 +221,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for edit task on user success scenario")
 	@Test
-	public void testEditTasksUserSuccess() {
+	public void testEditTasksUserSuccess() throws Exception{
 		Criteria criteria = Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
 				.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId()));
 		setQueryCriteriaForProject();
@@ -242,7 +242,7 @@ public class ProjectTasksServiceTests {
 	
 	@DisplayName("Junit test for edit task on user failure scenario if task is not found")
 	@Test
-	public void testEditTasksUserFailureIfTaskNotFound() {
+	public void testEditTasksUserFailureIfTaskNotFound() throws Exception{
 		Criteria criteria = Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
 				.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId()));
 		setQueryCriteriaForProject();
