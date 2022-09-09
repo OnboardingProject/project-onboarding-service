@@ -3,8 +3,6 @@ package com.project.onboarding.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,20 +19,21 @@ import com.project.onboarding.request.SaveTaskStatusRequest;
 import com.project.onboarding.response.ResponsePayLoad;
 import com.project.onboarding.service.ProjectOnboardingService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Amrutha Joseph
  * @description controller class for project onboarding
  * @created_Date 17/08/2022
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/project-onboarding")
 public class ProjectOnboardingController {
 
 	@Autowired
 	ProjectOnboardingService projectOnboardingService;
-
-	private static final Logger log = LoggerFactory.getLogger(ProjectOnboardingController.class);
 
 	/**
 	 * @param userId
@@ -112,7 +111,7 @@ public class ProjectOnboardingController {
 			allTasks.addAll(projectOnboardingService.fetchTaskList(projectId, resourceId));
 
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(allTasks, ProjectOnboardingConstant.TASKLIST_FETCH_SUCCESS, ""), HttpStatus.OK);
+					new ResponsePayLoad(allTasks, ProjectOnboardingConstant.API_TASK_LIST_FETCH_SUCCESS, ""), HttpStatus.OK);
 
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.warn("Exception while fetching Task List");
@@ -140,7 +139,7 @@ public class ProjectOnboardingController {
 			taskDetailsList.addAll(projectOnboardingService.saveStatus(saveTaskStatusRequest));
 
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(taskDetailsList, ProjectOnboardingConstant.TASKSTATUS_SAVE_SUCCESS, ""),
+					new ResponsePayLoad(taskDetailsList, ProjectOnboardingConstant.API_TASK_STATUS_SAVE_SUCCESS, ""),
 					HttpStatus.OK);
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.warn("Exception while saving task status");
@@ -169,7 +168,7 @@ public class ProjectOnboardingController {
 
 			log.info("Return the task details");
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(statusList, ProjectOnboardingConstant.TASKSTATUS_FETCH_SUCCESS, ""),
+					new ResponsePayLoad(statusList, ProjectOnboardingConstant.API_TASK_STATUS_FETCH_SUCCESS, ""),
 					HttpStatus.OK);
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.error("The task status list is empty");

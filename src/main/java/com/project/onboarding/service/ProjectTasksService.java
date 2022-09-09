@@ -1,23 +1,28 @@
 package com.project.onboarding.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import java.util.List;
-
-import java.util.ArrayList;
+import org.springframework.util.CollectionUtils;
 
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Project;
+import com.project.onboarding.model.ProjectTaskDetails;
 import com.project.onboarding.model.Task;
+import com.project.onboarding.model.TaskDetails;
+import com.project.onboarding.model.User;
+import com.project.onboarding.request.ProjectTaskRequest;
 import com.project.onboarding.util.ProjectOnboardingUtil;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author Sheeba VR
@@ -31,9 +36,13 @@ public class ProjectTasksService {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
+
 	@Autowired
 	private ProjectOnboardingUtil projectOnboardingUtil;
+
+	/* Class for sequential ID generation */
+	@Autowired
+	SequenceGeneratorService sequenceGenerator;
 
 	/**
 	 * @param ProjectId
@@ -43,10 +52,10 @@ public class ProjectTasksService {
 	 */
 	public List<Task> getProjectTasksByProjectId(String projectId) {
 		log.info("Method for fetch the project task list started");
-		
+
 		Query query = projectOnboardingUtil.createQuery(Criteria.where("projectId").is(projectId));
 		List<Project> project = mongoTemplate.find(query, Project.class);
-		
+
 		if (!CollectionUtils.isEmpty(project)) {
 			List<Task> projectTask = new ArrayList<Task>();
 			projectTask = project.get(0).getTasks();
@@ -54,6 +63,98 @@ public class ProjectTasksService {
 			return projectTask;
 		} else {
 			log.error("ProjectId not found");
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
+		}
+	}
+
+	/* Method for Add New Task to a Project - Also handles edit task */
+	public Project addOrEditTask(ProjectTaskRequest projectTaskRequest) {
+		log.info("In addOrEditTask Service");
+
+		/* Query to find the project exists */
+		Query query = projectOnboardingUtil.createQuery(Criteria.where("projectId").is(projectTaskRequest.getProjectId()));
+		List<Project> project = mongoTemplate.find(query, Project.class);
+
+		/*
+		 * Getting list of tasks from the project and checking if taskID exists if
+		 * exists do edit , if null then new task ID assigned and add task
+		 */
+		if (!CollectionUtils.isEmpty(project)) {
+			Task taskObj = new Task();
+			List<Task> tasks = project.get(0).getTasks();
+			int taskId = projectTaskRequest.getTask().getTaskId();
+			if (taskId == 0) {
+				taskId = sequenceGenerator.generateSequence(Task.SEQUENCE_NAME);
+				tasks.add(taskObj);
+			} else {
+				List<Task> taskList = tasks.stream()
+						.filter(t -> t.getTaskId() == (projectTaskRequest.getTask().getTaskId()))
+						.collect(Collectors.toList());
+				if (taskList.size() > 0)
+					taskObj = taskList.get(0);
+				else {
+					log.warn("Task not found, edit task failed");
+					throw new ProjectOnboardingException(ProjectOnboardingConstant.TASK_NOT_FOUND);
+				}
+			}
+
+			taskObj.setTaskId(taskId);
+			taskObj.setTaskName(projectTaskRequest.getTask().getTaskName());
+			taskObj.setTaskDesc(projectTaskRequest.getTask().getTaskDesc());
+			taskObj.setDesignation(projectTaskRequest.getTask().getDesignation());
+			
+			Update update = new Update();
+			update.set("tasks", tasks);
+			mongoTemplate.upsert(query, update, Project.class);
+
+			log.info("Task Added/Edited successfully");
+
+			/*
+			 * Find if any user under the project has the designation provided for the new
+			 * task/edited task
+			 */
+			query = projectOnboardingUtil.createQuery(Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
+					.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId())));
+
+			List<User> users = mongoTemplate.find(query, User.class);
+			TaskDetails taskDetails = new TaskDetails();
+
+			/* Add/Edit tasks for the user under the project */
+			List<TaskDetails> userTaskList = new ArrayList<TaskDetails>();
+			for (User user : users) {
+				for (ProjectTaskDetails projectTask : user.getProjectIds()) {
+					if (projectTask.getProjectId().equals(projectTaskRequest.getProjectId())) {
+						userTaskList = projectTask.getTasks();
+						List<TaskDetails> userTaskDetails = userTaskList.stream()
+								.filter(t -> t.getTaskId() == (projectTaskRequest.getTask().getTaskId()))
+								.collect(Collectors.toList());
+
+						if (userTaskDetails.size() > 0) {
+							taskDetails = userTaskDetails.get(0);
+							taskDetails.setTaskName(projectTaskRequest.getTask().getTaskName());
+						} else if(projectTaskRequest.getTask().getTaskId() == 0){
+							taskDetails.setTaskId(taskId);
+							taskDetails.setTaskStatus(ProjectOnboardingConstant.YET_TO_START);
+							taskDetails.setTaskName(projectTaskRequest.getTask().getTaskName());
+							userTaskList.add(taskDetails);
+						} else {
+							log.error("Project not found, Add/edit task failed");
+							throw new ProjectOnboardingException(ProjectOnboardingConstant.TASK_NOT_FOUND);
+						}
+						projectTask.setTasks(userTaskList);
+					}
+
+				}
+
+				Update userUpdate = new Update();
+				userUpdate.set("projectIds", user.getProjectIds());
+				mongoTemplate.upsert(query, userUpdate, User.class);
+
+			}
+			return project.get(0);
+
+		} else {
+			log.warn("Project not found, Add/edit task failed");
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
 		}
 	}

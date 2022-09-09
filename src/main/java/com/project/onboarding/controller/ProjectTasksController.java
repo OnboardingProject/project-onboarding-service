@@ -8,11 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
+import com.project.onboarding.request.ProjectTaskRequest;
 import com.project.onboarding.response.ResponsePayLoad;
 import com.project.onboarding.service.ProjectTasksService;
 
@@ -30,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProjectTasksController {
 
 	@Autowired
-	ProjectTasksService projecTaskService;
+	ProjectTasksService projectTasksService;
 
 	/**
 	 * Description : API for fetch task details based on project
@@ -44,12 +47,12 @@ public class ProjectTasksController {
 		try {
 			log.info("Started project task fetch api method");
 			List<Object> tasksList = new ArrayList<Object>();
-			tasksList.addAll(projecTaskService.getProjectTasksByProjectId(projectId));
+			tasksList.addAll(projectTasksService.getProjectTasksByProjectId(projectId));
 
 			log.info("Return the selected project task details");
 
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(tasksList, ProjectOnboardingConstant.TASKLIST_FETCH_SUCCESS, ""),
+					new ResponsePayLoad(tasksList, ProjectOnboardingConstant.API_TASK_LIST_FETCH_SUCCESS, ""),
 					HttpStatus.OK);
 
 		} catch (ProjectOnboardingException projectOnboardingException) {
@@ -61,6 +64,32 @@ public class ProjectTasksController {
 			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", exception.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
+	
+	/**
+	 * Description : API for Add/Edit task of a project
+	 * @Param : projectTaskRequest
+	 * @Return: Project
+	 */
+	@PostMapping("/add-or-edit-task")
+	public ResponseEntity<ResponsePayLoad> addOrEditTask(@RequestBody ProjectTaskRequest projectTaskRequest) {
+		log.info("In Add or Edit Task controller");
+		try {
+			List<Object> newProject = new ArrayList<Object>();
+			newProject.add(projectTasksService.addOrEditTask(projectTaskRequest));
+
+			log.info("Task is added or edited successsfully");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(newProject, "SucessFully Tasks Added", " "), HttpStatus.CREATED);
+		} catch (ProjectOnboardingException projectOnboardingException) {
+			log.warn("Exception while add/edit task");
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.NOT_FOUND);
+		} catch (Exception exception) {
+			log.error("Add/Edit tasks Failed");
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", exception.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }

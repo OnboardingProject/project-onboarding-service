@@ -80,10 +80,9 @@ public class ProjectOnboardingServiceTests {
 		userIds.add("U11");
 		userIds.add("U12");
 
-		List<String> designations = new ArrayList<String>();
-		designations.add("Java Developer");
+		String designation = "Java Developer";
 
-		task = new Task(1, "Seat allocation", "User needs a chair", designations);
+		task = new Task(1, "Seat allocation", "User needs a chair", designation);
 		tasks.add(task);
 
 		LocalDateTime date = LocalDateTime.now();

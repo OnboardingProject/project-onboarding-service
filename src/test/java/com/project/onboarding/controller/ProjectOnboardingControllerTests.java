@@ -171,13 +171,13 @@ public class ProjectOnboardingControllerTests {
 	@Test
 	public void getAllTasklistFailureTest() throws Exception {
 		when(projectOnboardingService.fetchTaskList("P_001", "U11"))
-				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.TASK_LIST_NOT_FOUND));
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/project-onboarding/view-tasks/P_001/U11")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(taskList)))
 				.andExpect(MockMvcResultMatchers.status().isConflict()).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
-						.value(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+						.value(ProjectOnboardingConstant.TASK_LIST_NOT_FOUND));
 		verify(projectOnboardingService, times(1)).fetchTaskList("P_001", "U11");
 	}
 
@@ -196,12 +196,12 @@ public class ProjectOnboardingControllerTests {
 	@Test
 	public void saveTaskStatusFailureTest() throws Exception {
 		when(projectOnboardingService.saveStatus(any()))
-				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.TASK_LIST_NOT_FOUND));
 
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/project-onboarding/save-task-status").contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(saveTaskStatusRequest))).andExpect(MockMvcResultMatchers.status().isConflict())
 				.andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.TASKLIST_NOT_FOUND));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value(ProjectOnboardingConstant.TASK_LIST_NOT_FOUND));
 		verify(projectOnboardingService, times(1)).saveStatus(any());
 
 	}

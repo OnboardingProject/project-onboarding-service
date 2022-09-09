@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @description : Class contains util functions.
  * @date : 18 August 2022
  */
+
 @Slf4j
 @Component
 public class ProjectOnboardingUtil {

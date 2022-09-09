@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,12 +26,15 @@ import com.project.onboarding.response.ProjectDetailsResponse;
 import com.project.onboarding.response.UserDetailsResponse;
 import com.project.onboarding.util.ProjectOnboardingUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Amrutha Joseph
  * @description Service class for project onboarding
  * @created_Date 17/08/2022
  */
 
+@Slf4j
 @Service
 public class ProjectOnboardingService {
 
@@ -42,8 +43,6 @@ public class ProjectOnboardingService {
 
 	@Autowired
 	ProjectOnboardingUtil projectOnboardingUtil;
-
-	private static final Logger log = LoggerFactory.getLogger(ProjectOnboardingService.class);
 
 	/**
 	 * @param userId
@@ -207,7 +206,7 @@ public class ProjectOnboardingService {
 			return tasks;
 		} else {
 			log.error("User or Project or Tasks associated are not found, fetching task list failed");
-			throw new ProjectOnboardingException(ProjectOnboardingConstant.TASKLIST_NOT_FOUND);
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.TASK_LIST_NOT_FOUND);
 		}
 	}
 

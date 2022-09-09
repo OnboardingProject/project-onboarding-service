@@ -60,7 +60,6 @@ public class OnboardingStatusServiceTests {
 	
 	List<Project> projects = new ArrayList<Project>();
 	List<String> userIds = new ArrayList<String>();
-	List<String> designations = new ArrayList<String>();
 	List<Task> tasks = new ArrayList<Task>();
 	List<User> users1 = new ArrayList<User>();
 	List<User> users2 = new ArrayList<User>();
@@ -86,8 +85,8 @@ public class OnboardingStatusServiceTests {
     
     @BeforeEach
     public void setup(){
-    	designations.add("Software Developer");
-    	Task task = new Task(1, "seat allocation", "seat allocation", designations); 
+    	String designation = "Software Developer";
+    	Task task = new Task(1, "seat allocation", "seat allocation", designation); 
     	tasks.add(task);
     	
     	userIds.add("U13");
@@ -127,7 +126,6 @@ public class OnboardingStatusServiceTests {
     
     @AfterEach
 	public void tearDown() {
-    	designations.clear();
     	tasks.clear();
     	userIds.clear();
     	projects.clear();
