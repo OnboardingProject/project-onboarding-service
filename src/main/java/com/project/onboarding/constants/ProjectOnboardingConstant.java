@@ -16,6 +16,7 @@ public  class  ProjectOnboardingConstant {
 		  public static final String INVALIDPROJECTID="ProjectId cannot be empty";
 		  public static final String INVALIDTASKID="Task not found";
 		  public static final String NOTASKFOUND="No task found";
+		  public static final String TASK_NOT_FOUND="No task found";
 		  
 		  public static final String DELETESUCCESS="Successfully delete the tasks"; 
 		  public static final String INTERNALSERVERERROR="Internal server error"; 
