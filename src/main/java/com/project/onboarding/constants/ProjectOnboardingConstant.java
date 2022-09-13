@@ -71,6 +71,8 @@ public class ProjectOnboardingConstant {
 	
 	public static final String INVALID_USER_ID = "Invalid user id, please provide valid id";
 	
+	public static final String INVALID_TASK_ID = "Invalid task id, please provide valid id";
+	
 	public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
 	
 	static {

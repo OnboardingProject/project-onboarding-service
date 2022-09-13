@@ -325,6 +325,38 @@ public class ProjectOnboardingServiceTests {
 	}
 
 	@Test
+	public void saveStatusTestFailureIfTaskNotFoundOnUserFailureTest() {
+		List<TaskStatusRequest> taskRequest = new ArrayList<>();
+		SaveTaskStatusRequest saveTaskStatusRequest = new SaveTaskStatusRequest();
+		TaskStatusRequest taskStatusReq = new TaskStatusRequest();
+
+		taskStatusReq.setTaskId(1);
+		taskStatusReq.setTaskStatus("Done");
+
+		taskRequest.add(taskStatusReq);
+
+		saveTaskStatusRequest.setProjectId("P_001");
+		saveTaskStatusRequest.setUserId("U11");
+		saveTaskStatusRequest.setTaskStatusRequest(taskRequest);
+
+		taskDetailsExpected = new TaskDetails(1, "Seat allocation", "Done");
+		List<TaskDetails> taskDetailsExpectedList = new ArrayList<>();
+		taskDetailsExpectedList.add(taskDetailsExpected);
+
+		setQueryAndCriteriaForFetchTaskList();
+		users.get(0).getProjectIds().get(0).getTasks().get(0).setTaskId(2);
+		when(mongoTemplate.find(Query.query(new Criteria().andOperator(Criteria.where("userId").is("U11"),
+				Criteria.where("projectIds.projectId").is(saveTaskStatusRequest.getProjectId()))), User.class))
+				.thenReturn(users);
+
+		ProjectOnboardingException actualErrormsg = assertThrows(ProjectOnboardingException.class, () -> {
+			projectOnboardingService.saveStatus(saveTaskStatusRequest);
+		});
+
+		assertEquals(ProjectOnboardingConstant.TASK_NOT_FOUND, actualErrormsg.getErrorMessage());
+	}
+	
+	@Test
 	public void saveStatusTestFailureWhenNoTaskAssignedTest() {
 		List<TaskStatusRequest> taskRequest = new ArrayList<>();
 		taskDetailsList.clear();

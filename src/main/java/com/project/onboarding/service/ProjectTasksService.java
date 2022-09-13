@@ -19,6 +19,7 @@ import com.project.onboarding.model.ProjectTaskDetails;
 import com.project.onboarding.model.Task;
 import com.project.onboarding.model.TaskDetails;
 import com.project.onboarding.model.User;
+import com.project.onboarding.request.DeleteTaskRequest;
 import com.project.onboarding.request.ProjectTaskRequest;
 import com.project.onboarding.util.ProjectOnboardingUtil;
 
@@ -68,11 +69,12 @@ public class ProjectTasksService {
 	}
 
 	/* Method for Add New Task to a Project - Also handles edit task */
-	public Project addOrEditTask(ProjectTaskRequest projectTaskRequest) throws Exception{
+	public Project addOrEditTask(ProjectTaskRequest projectTaskRequest) throws Exception {
 		log.info("In addOrEditTask Service");
 
 		/* Query to find the project exists */
-		Query query = projectOnboardingUtil.createQuery(Criteria.where("projectId").is(projectTaskRequest.getProjectId()));
+		Query query = projectOnboardingUtil
+				.createQuery(Criteria.where("projectId").is(projectTaskRequest.getProjectId()));
 		List<Project> project = mongoTemplate.find(query, Project.class);
 
 		/*
@@ -102,7 +104,7 @@ public class ProjectTasksService {
 			taskObj.setTaskName(projectTaskRequest.getTask().getTaskName());
 			taskObj.setTaskDesc(projectTaskRequest.getTask().getTaskDesc());
 			taskObj.setDesignation(projectTaskRequest.getTask().getDesignation());
-			
+
 			Update update = new Update();
 			update.set("tasks", tasks);
 			mongoTemplate.upsert(query, update, Project.class);
@@ -113,8 +115,9 @@ public class ProjectTasksService {
 			 * Find if any user under the project has the designation provided for the new
 			 * task/edited task
 			 */
-			query = projectOnboardingUtil.createQuery(Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
-					.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId())));
+			query = projectOnboardingUtil
+					.createQuery(Criteria.where("designation").in(projectTaskRequest.getTask().getDesignation())
+							.andOperator(Criteria.where("projectIds.projectId").in(projectTaskRequest.getProjectId())));
 
 			List<User> users = mongoTemplate.find(query, User.class);
 			TaskDetails taskDetails = new TaskDetails();
@@ -132,7 +135,7 @@ public class ProjectTasksService {
 						if (userTaskDetails.size() > 0) {
 							taskDetails = userTaskDetails.get(0);
 							taskDetails.setTaskName(projectTaskRequest.getTask().getTaskName());
-						} else if(projectTaskRequest.getTask().getTaskId() == 0){
+						} else if (projectTaskRequest.getTask().getTaskId() == 0) {
 							taskDetails.setTaskId(taskId);
 							taskDetails.setTaskStatus(ProjectOnboardingConstant.YET_TO_START);
 							taskDetails.setTaskName(projectTaskRequest.getTask().getTaskName());
@@ -151,6 +154,91 @@ public class ProjectTasksService {
 			return project.get(0);
 		} else {
 			log.warn("Project not found, Add/edit task failed");
+			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
+		}
+	}
+
+	/**
+	 * @param ProjectId
+	 * @return List of Tasks
+	 * @throws ProjectOnboardingException
+	 * @description Delete the tasks based on projectId
+	 */
+
+	public List<Task> deleteTask(DeleteTaskRequest deleteTaskRequest) throws Exception {
+		log.info("Method for delete the project task based on project Id");
+
+		List<Task> deleteTaskList = new ArrayList<Task>();
+
+		Query query = new Query();
+		query.addCriteria(Criteria.where("projectId").is(deleteTaskRequest.getProjectId()));
+		List<Project> project = mongoTemplate.find(query, Project.class);
+
+		if (!CollectionUtils.isEmpty(project)) {
+			List<Task> projectTask = project.get(0).getTasks();
+			List<Integer> taskIdList = deleteTaskRequest.getTaskIdList();
+
+			// Task Id checking
+			log.info("Task Id checking for deletion");
+			deleteTaskList = projectTask.stream().filter(s -> taskIdList.contains(s.getTaskId()))
+					.collect(Collectors.toList());
+			if (deleteTaskList.size() < taskIdList.size()) {
+				log.error("Task(s) not found");
+				throw new ProjectOnboardingException(ProjectOnboardingConstant.TASK_NOT_FOUND);
+			}
+
+			// Remove the selected tasks from the project
+			log.info("Delete tasks");
+			projectTask.removeAll(deleteTaskList);
+
+			// Find if any user under the project has the same designation then delete tasks
+			log.info("Delete the task(s) from User");
+			List<User> userList = new ArrayList<User>();
+
+			Query userDeleteQuery = new Query();
+			userDeleteQuery.addCriteria(Criteria.where("projectIds.projectId").is(deleteTaskRequest.getProjectId())
+					.andOperator(Criteria.where("projectIds.tasks.taskId").in(taskIdList)));
+
+			userList = mongoTemplate.find(userDeleteQuery, User.class);
+
+			for (User user : userList) {
+				List<ProjectTaskDetails> projectTaskList = user.getProjectIds()
+														.stream()
+														.filter(s -> s.getProjectId().equals(deleteTaskRequest.getProjectId()))
+														.collect(Collectors.toList());
+
+				List<TaskDetails> tasksForUser = projectTaskList
+												.stream()
+												.map(m -> m.getTasks())
+												.flatMap(List::stream)
+												.collect(Collectors.toList());
+
+				if (!CollectionUtils.isEmpty(tasksForUser)) {
+					List<TaskDetails> userTasksToBeDeleted = tasksForUser
+															.stream()
+															.filter(t -> (taskIdList.contains(t.getTaskId())))
+															.collect(Collectors.toList());
+					tasksForUser.removeAll(userTasksToBeDeleted);
+					
+					Query userUpdateQuery = new Query(
+							Criteria.where("projectIds.projectId").is(deleteTaskRequest.getProjectId())
+									.andOperator(Criteria.where("userId").is(user.getUserId())));
+
+					Update userUpdate = new Update();
+					userUpdate.set("projectIds.$.tasks", tasksForUser);
+					mongoTemplate.upsert(userUpdateQuery, userUpdate, User.class);
+				}
+			}
+
+			// Removes tasks from the project document
+			log.info("Update Project Document");
+			Update update = new Update();
+			update.set("tasks", projectTask);
+			mongoTemplate.upsert(query, update, Project.class);
+
+			return projectTask;
+		} else {
+			log.error("ProjectId not found");
 			throw new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND);
 		}
 	}

@@ -31,6 +31,7 @@ import com.project.onboarding.constants.ProjectOnboardingConstant;
 import com.project.onboarding.exception.ProjectOnboardingException;
 import com.project.onboarding.model.Project;
 import com.project.onboarding.model.Task;
+import com.project.onboarding.request.DeleteTaskRequest;
 import com.project.onboarding.request.ProjectTaskRequest;
 import com.project.onboarding.service.ProjectTasksService;
 
@@ -48,11 +49,14 @@ public class ProjectTasksControllerTests {
 	private MockMvc mockMvc;
 
 	Project project;
-	Task task;
+	Task task1, task2, task3;
 	List<Project> projectList = new ArrayList<Project>();
 	List<Task> taskList = new ArrayList<Task>();
 	ProjectTaskRequest projectTaskRequest;
-
+	DeleteTaskRequest deleteTaskRequest;
+	List<Integer> deleteList = new ArrayList<Integer>();
+	List<Task> taskListAfterDeletion = new ArrayList<Task>();
+	
 	@BeforeEach
 	public void init() {
 		mockMvc = MockMvcBuilders.standaloneSetup(projectTasksController).build();
@@ -62,23 +66,36 @@ public class ProjectTasksControllerTests {
 		userIds.add("U12");
 		userIds.add("U13");
 
-		task = new Task(1, "Seat Allocation", "User Need Seat Allocation", "Software Engineer");
-		taskList.add(task);
+		task1 = new Task(1, "Seat Allocation", "User Need Seat Allocation", "Software Engineer");
+		taskList.add(task1);
+		task2 = new Task(2, "Chair allocation", "User Need Chair Allocation", "System Analyst");
+		taskList.add(task2);
+		task3 = new Task(3, "Laptop allocation", "User Need Laptop Allocation", "Software Engineer");
+		taskList.add(task3);
 
 		project = new Project("P_001", "Employee Allocation", "Employee allocation Project", LocalDateTime.now(), "U1",
 				"U12", LocalDateTime.now(), userIds, taskList);
 
 		projectList.add(project);
 
-		projectTaskRequest = new ProjectTaskRequest("P_001", task);
+		projectTaskRequest = new ProjectTaskRequest("P_001", task1);
+		
+		deleteList.add(2);
+		deleteList.add(3);
+		
+		deleteTaskRequest = new DeleteTaskRequest("P_001", deleteList);
+		
+		taskListAfterDeletion.add(task1);
 	}
 
 	@DisplayName("JUnit test for getProjectTasksByProjectId success scenario ")
 	@Test
 	public void getAllTaskByProjectSuccessTest() throws Exception {
 		when(projectTasksService.getProjectTasksByProjectId("P_001")).thenReturn(taskList);
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/project-tasks/fetch-project-tasks/P_001")
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 	@DisplayName("JUnit test for getProjectTasksByProjectId failure scenario ")
@@ -100,7 +117,7 @@ public class ProjectTasksControllerTests {
 	@DisplayName("JUnit test for addOrEditTask to a Project success scenario ")
 	@Test
 	public void addOrEditTaskSuccessTest() throws Exception {
-		task.setTaskId(0);
+		task1.setTaskId(0);
 
 		when(projectTasksService.addOrEditTask(any())).thenReturn(project);
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/project-tasks/add-or-edit-task")
@@ -112,7 +129,7 @@ public class ProjectTasksControllerTests {
 	@DisplayName("JUnit test for addOrEditTask to a Project failure scenario ")
 	@Test
 	public void addOrEditTaskFailureTest() throws Exception {
-		task.setTaskId(0);
+		task1.setTaskId(0);
 
 		when(projectTasksService.addOrEditTask(any()))
 				.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
@@ -151,6 +168,48 @@ public class ProjectTasksControllerTests {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
 						.value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
 		verify(projectTasksService, times(1)).addOrEditTask(any());
+	}
+	
+	@DisplayName("JUnit test for deleteTasks success scenario ")
+	@Test
+	public void deleteTasksSuccessTest() throws Exception {
+		when(projectTasksService.deleteTask(deleteTaskRequest)).thenReturn(taskListAfterDeletion);
+		
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/project-tasks/delete-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(deleteTaskRequest)))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data[0][0].taskId").value(1));
+	}
+	
+	@DisplayName("JUnit test for deleteTasks failure scenario ")
+	@Test
+	public void deleteTasksFailureTest() throws Exception {
+		when(projectTasksService.deleteTask(any()))
+								.thenThrow(new ProjectOnboardingException(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+		
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/project-tasks/delete-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(deleteTaskRequest)))
+				.andExpect(MockMvcResultMatchers.status().isConflict())
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.PROJECT_NOT_FOUND));
+		
+		verify(projectTasksService, times(1)).deleteTask(any());
+	}
+	
+	@DisplayName("JUnit test for deleteTasks internal server error scenario ")
+	@Test
+	public void deleteTasksInternalServerFailuerTest() throws Exception {
+		when(projectTasksService.deleteTask(any()))
+				.thenThrow(new Exception(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/project-tasks/delete-task")
+				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(deleteTaskRequest)))
+				.andExpect(status().isInternalServerError()).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage")
+						.value(ProjectOnboardingConstant.INTERNAL_SERVER_ERROR));
+		verify(projectTasksService, times(1)).deleteTask(any());
 	}
 
 	public static String asJsonString(final Object obj) {
