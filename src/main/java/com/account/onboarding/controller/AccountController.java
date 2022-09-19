@@ -27,6 +27,7 @@ import com.account.onboarding.request.InitiativesVO;
 import com.account.onboarding.response.AboutCustomerResponseVO;
 import com.account.onboarding.service.AccountService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,6 +52,7 @@ public class AccountController {
 	 * @return saved account
 	 */
 	@PostMapping("/account")
+	@Operation(summary = "Create an account", description = "This API is used to create an account")
 	public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequestVO accountRequest) {
 		log.info("------------- createAccount Controller call start-------------");
 		Account savedAccount = accountService.createAccount(accountRequest);
@@ -65,6 +67,7 @@ public class AccountController {
 	 * @return responseEntity
 	 */
 	@PostMapping("/account/about-customer")
+	@Operation(summary = "Add about customer", description = "This API is used to add about customer")
 	public ResponseEntity<AboutCustomerResponseVO> addAboutCustomer(
 			@Valid @RequestBody AboutCustomerRequestVO aboutCustomerRequestVO) {
 		log.info("------------- addAboutCustomer controller call start -------------");
@@ -78,6 +81,7 @@ public class AccountController {
 	 * @return
 	 */
 	@PostMapping("/account/engagement")
+	@Operation(summary = "create Customer Engagements", description = "This API is used to create customer engagements")
 	public ResponseEntity<List<CustomerEngagement>> createCustomerEngagement(
 			@Valid @RequestBody CustomerEngagementRequestVO customerEngagementRequestVO) {
 		log.info("------------- createCustomerEngagement Controller call start-------------");
@@ -93,6 +97,7 @@ public class AccountController {
 	 * @return List of Accounts
 	 */
 	@GetMapping("/account")
+	@Operation(summary = "Get all accounts", description = "This API is used to get all accounts")
 	public ResponseEntity<List<Account>> getAllAccounts() {
 		log.info("------------- getAllAccounts controller call start -------------");
 		List<Account> accounts = accountService.getAllAccounts();
@@ -107,6 +112,7 @@ public class AccountController {
 	 * @return aboutCustomerResponseVO
 	 */
 	@GetMapping("/account/about-customer/{accountId}")
+	@Operation(summary = "View details of About Customer", description = "This API is used to view details of About Customer")
 	public ResponseEntity<AboutCustomerResponseVO> viewAboutCustomer(@PathVariable("accountId") String accountId) {
 		log.info("------------- viewAboutCustomer controller call start -------------");
 		AboutCustomerResponseVO aboutCustomerResponseVO = accountService.viewAboutCustomer(accountId);
@@ -115,6 +121,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/account/engagement/{accountId}")
+	@Operation(summary = "View Customer Engagements", description = "This API is used to view customer engagements")
 	public ResponseEntity<List<CustomerEngagement>> viewCustomerEngagements(
 			@PathVariable("accountId") String accountId) {
 		log.info("------------- viewCustomerEngagements controller call start -------------");
@@ -128,6 +135,7 @@ public class AccountController {
 	 * @return aboutCustomerResponseVO
 	 */
 	@PutMapping("/account/about-customer")
+	@Operation(summary = "Update details of About Customer", description = "This API is used to update details of about customer")
 	public ResponseEntity<AboutCustomerResponseVO> updateAboutCustomer(
 			@Valid @RequestBody AboutCustomerRequestVO aboutCustomerRequestVO) {
 		log.info("------------- updateAboutCustomer controller call start -------------");
@@ -141,6 +149,7 @@ public class AccountController {
 	 * @return
 	 */
 	@PutMapping("/account/engagement")
+	@Operation(summary = "Update Customer Engagements", description = "This API is used to update customer engagements")
 	public ResponseEntity<List<CustomerEngagement>> updateCustomerEngagements(
 			@Valid @RequestBody CustomerEngagementRequestVO customerEngagementRequestVO) {
 		log.info("------------- updateCustomerEngagements controller call start -------------");
@@ -158,6 +167,7 @@ public class AccountController {
 	 */
 
 	@PostMapping()
+	@Operation(summary = "Add Account Overview", description = "This API is used to add account overview")
 	public ResponseEntity<String> addAccountOverview(@RequestBody @Valid AccountVO accountVo) {
 		if (accountVo.getAccountId() != null) {
 			String accountDescription = accountService.updateOverview(accountVo);
@@ -176,6 +186,7 @@ public class AccountController {
 	 * @return updatedAccount
 	 */
 	@PutMapping()
+	@Operation(summary = "Update Account Overview", description = "This API is used to update account overview")
 	public ResponseEntity<String> updateOverview(@RequestBody @Valid AccountVO accountVo) {
 
 		if (accountVo.getAccountId() != null) {
@@ -195,6 +206,7 @@ public class AccountController {
 	 * @return accountOverview
 	 */
 	@GetMapping("/{accountId}")
+	@Operation(summary = "View Account Overview", description = "This API is used to view account overview")
 	public ResponseEntity<String> viewAccountOverview(@PathVariable String accountId) {
 
 		String accountOverview = accountService.viewAccountOverview(accountId);
@@ -211,6 +223,7 @@ public class AccountController {
 	 */
 
 	@PostMapping("/account/initiatives")
+	@Operation(summary = "Save Initiatives", description = "This API is used to save initiatives")
 	public ResponseEntity<List<AccountInitiative>> saveInitiatives(@RequestBody InitiativesVO initiativesVO) {
 		if (initiativesVO.getAccountId() != null) {
 			List<AccountInitiative> initiatives = accountService.saveInitiatives(initiativesVO);
@@ -230,6 +243,7 @@ public class AccountController {
 	 * @return updatedInitiatives
 	 */
 	@PutMapping("/account/initiatives")
+	@Operation(summary = "Update Initiatives", description = "This API is used to update initiatives")
 	public ResponseEntity<List<AccountInitiative>> updateInitiative(@RequestBody InitiativesVO initiativesVO) {
 		if (initiativesVO.getAccountId() != null) {
 			List<AccountInitiative> updatedInitiatives = accountService.updateInitiatives(initiativesVO);
@@ -249,6 +263,7 @@ public class AccountController {
 	 */
 
 	@GetMapping("/account/initiatives/{accountId}")
+	@Operation(summary = "View Initiatives", description = "This API is used to view initiatives")
 	public ResponseEntity<List<AccountInitiative>> viewInitiatives(@PathVariable String accountId) {
 
 		List<AccountInitiative> view = accountService.viewInitiatives(accountId);

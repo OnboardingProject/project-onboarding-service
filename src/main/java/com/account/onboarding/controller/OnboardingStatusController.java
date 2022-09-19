@@ -22,6 +22,7 @@ import com.account.onboarding.response.StatusReportResponse;
 import com.account.onboarding.response.TaskPercentageReportResponse;
 import com.account.onboarding.service.impl.OnboardingStatusService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,6 +44,7 @@ public class OnboardingStatusController {
 	 * @description : Preview status report of a particular user for a project
 	 */
 	@GetMapping("/preview-report/{projectId}/{userId}")
+	@Operation(summary = "Get Preview Status Report", description = "This API is used to get preview status report")
 	public ResponseEntity<ResponsePayLoad> getPreviewStatusReport(
 			@Valid @PathVariable("projectId") @NotNull @Size(min = 1, message = ProjectOnboardingConstant.INVALID_PROJECT_ID) String projectId,
 			@PathVariable("userId") @NotNull @Size(min = 1, message = ProjectOnboardingConstant.INVALID_USER_ID) String userId) {
@@ -75,6 +77,7 @@ public class OnboardingStatusController {
 	 * @description : Download status report in excel format for a particular user of a project
 	 */
 	@GetMapping("/export-report/{projectId}/{userId}")
+	@Operation(summary = "Download Status Report in Excel Format", description = "This API is used to download status report in excel format")
 	public ResponseEntity<ResponsePayLoad> exportStatusReportInExcelFormat(
 			@Valid @PathVariable("projectId") @Size(min = 1, message = ProjectOnboardingConstant.INVALID_PROJECT_ID) String projectId,
 			@PathVariable("userId") @Size(min = 1, message = ProjectOnboardingConstant.INVALID_USER_ID) String userId) {

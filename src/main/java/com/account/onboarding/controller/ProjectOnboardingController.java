@@ -19,6 +19,7 @@ import com.account.onboarding.request.SaveTaskStatusRequest;
 import com.account.onboarding.response.ResponsePayLoad;
 import com.account.onboarding.service.impl.ProjectOnboardingService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,10 +43,9 @@ public class ProjectOnboardingController {
 	 */
 
 	@GetMapping("/projects/{userId}")
+	@Operation(summary = "Get Projects for a user", description = "This API is used to get projects of a user")
 	public ResponseEntity<ResponsePayLoad> getProjects(@PathVariable String userId) {
-
 		try {
-
 			log.info("Inside project onboarding controller getProjects try block");
 			List<Object> projects = new ArrayList<Object>();
 			projects.addAll(projectOnboardingService.getProjectsBasedOnUser(userId));
@@ -72,8 +72,8 @@ public class ProjectOnboardingController {
 	 */
 
 	@GetMapping("/resources/{projectId}")
+	@Operation(summary = "Get users of a project", description = "This API is used to get users of a project")
 	public ResponseEntity<ResponsePayLoad> getUsers(@PathVariable String projectId) {
-
 		try {
 
 			log.info("Inside project onboarding controller getUsers try block");
@@ -102,6 +102,7 @@ public class ProjectOnboardingController {
 	 */
 
 	@GetMapping("/view-tasks/{projectId}/{resourceId}")
+	@Operation(summary = "Get all tasks of a user for a project", description = "This API is used to get all tasks of a user for a project")
 	public ResponseEntity<ResponsePayLoad> getAllTasks(@PathVariable String projectId,
 			@PathVariable String resourceId) {
 		try {
@@ -131,6 +132,7 @@ public class ProjectOnboardingController {
 	 */
 
 	@PutMapping("/save-task-status")
+	@Operation(summary = "Save list of task statuses for a user in a project", description = "This API is used to save list of task statuses for a user in a project")
 	public ResponseEntity<ResponsePayLoad> saveTaskStatus(@RequestBody SaveTaskStatusRequest saveTaskStatusRequest) {
 		try {
 			log.info("In save status controller");
@@ -159,6 +161,7 @@ public class ProjectOnboardingController {
 	 * @return: List of Types object, ProjectOnboardingException, Exception
 	 */
 	@GetMapping("/fetch-task-status")
+	@Operation(summary = "Get list of all task statuses for a user in a project", description = "This API is used to save list of task statuses for a user in a project")
 	public ResponseEntity<ResponsePayLoad> fetchAllTaskStatus() {
 		try {
 			log.info("Starting of fetch all task status");

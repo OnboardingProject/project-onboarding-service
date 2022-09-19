@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,8 +94,8 @@ public class OnboardingStatusServiceTests {
     	userIds.add("U14");
     	userIds.add("U15");
     	
-    	LocalDateTime dateTime = LocalDateTime.now();
-    	project = new Project("P_1", "Onboarding", "Onboarding resources", dateTime, "U13", "U13", dateTime, userIds, tasks);
+    	Date date = new Date();
+    	project = new Project("P_1", "Onboarding", "Onboarding resources", date, "U13", "U13", date, userIds, tasks);
     	projects.add(project);
     	
     	AccountDocument accountDocument = new AccountDocument("D_1", "read");
@@ -103,14 +103,14 @@ public class OnboardingStatusServiceTests {
     	
     	projectTaskDetails = new ProjectTaskDetails("P_1", taskDetailsList);
     	
-    	user1 = new User("U13", "Thara", "Test", "Thara", "P", "thara.pattuamveetil@ust.com", "1245232542", "Project head", dateTime, "Admin", "Admin", dateTime, 2, accountDocuments, "Thara", projectTaskDetailsList);
-    	user2 = new User("U14", "Sumitha", "Test", "Sumitha", "Vidhukumar", "sumitha.vidhukumar@ust.com", "1245232542", "Project manager", dateTime, "U13", "U13", dateTime, 3, accountDocuments, "Thara, Sumitha", projectTaskDetailsList);
+    	user1 = new User("U13", "Thara", "Test", "Thara", "P", "thara.pattuamveetil@ust.com", "1245232542", "Project head", date, "Admin", "Admin", date, 2, accountDocuments, "Thara", projectTaskDetailsList);
+    	user2 = new User("U14", "Sumitha", "Test", "Sumitha", "Vidhukumar", "sumitha.vidhukumar@ust.com", "1245232542", "Project manager", date, "U13", "U13", date, 3, accountDocuments, "Thara, Sumitha", projectTaskDetailsList);
     	
     	taskDetails = new TaskDetails(1, "seat allocation", "In-progress");
     	taskDetailsList.add(taskDetails);
     	projectTaskDetails = new ProjectTaskDetails("P_1", taskDetailsList);
     	projectTaskDetailsList.add(projectTaskDetails);
-    	user3 = new User("U15", "Janaki", "Test", "Janaki", "Perumal", "janaki.perumal@ust.com", "1245232542", "Software Engineer", dateTime, "U14", "U14", dateTime, 4, accountDocuments, "Thara, Sumitha, Janaki", projectTaskDetailsList);
+    	user3 = new User("U15", "Janaki", "Test", "Janaki", "Perumal", "janaki.perumal@ust.com", "1245232542", "Software Engineer", date, "U14", "U14", date, 4, accountDocuments, "Thara, Sumitha, Janaki", projectTaskDetailsList);
 
     	ProjectTasksOverviewResponse projectTasksOverview = new ProjectTasksOverviewResponse("U15", "Janaki Perumal", 50);
     	

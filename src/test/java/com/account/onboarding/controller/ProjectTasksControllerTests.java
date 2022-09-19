@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,8 +73,8 @@ public class ProjectTasksControllerTests {
 		task3 = new Task(3, "Laptop allocation", "User Need Laptop Allocation", "Software Engineer");
 		taskList.add(task3);
 
-		project = new Project("P_001", "Employee Allocation", "Employee allocation Project", LocalDateTime.now(), "U1",
-				"U12", LocalDateTime.now(), userIds, taskList);
+		project = new Project("P_001", "Employee Allocation", "Employee allocation Project", new Date(), "U1",
+				"U12", new Date(), userIds, taskList);
 
 		projectList.add(project);
 

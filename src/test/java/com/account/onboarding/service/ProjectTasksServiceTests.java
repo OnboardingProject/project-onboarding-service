@@ -7,8 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +62,7 @@ public class ProjectTasksServiceTests {
 	TaskDetails userTasks;
 	List<User> userList =  new ArrayList<User>();
 	User user;
-	LocalDateTime localDate = LocalDateTime.now();
+	Date localDate = new Date();
 	List<AccountDocument> accountDocuments = new ArrayList<AccountDocument>();
 	List<ProjectTaskDetails> projectTaskDetails =  new ArrayList<ProjectTaskDetails>();
 	List<Integer> deleteList = new ArrayList<Integer>();

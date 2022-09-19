@@ -1,8 +1,9 @@
 package com.account.onboarding.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Document("User")
 public class User {
+	@Id
 	private String userId;
 	private String userName;
     private String accountName;
@@ -30,10 +32,10 @@ public class User {
     private String emailId;
     private String phoneNo;
     private String designation;
-    private LocalDateTime createdTime;
+    private Date createdTime;
     private String createdBy;
     private String lastUpdateBy;
-    private LocalDateTime lastUpdateTime;
+    private Date lastUpdateTime;
     private Integer roleId;
     private List<AccountDocument> accountDocuments;
     private String hierarchy;

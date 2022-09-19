@@ -1,6 +1,6 @@
 package com.account.onboarding.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -30,10 +30,10 @@ public class Project {
 	private String projectName;
 	@Size(min = 10, max = 150, message = "Description must be between 10 and 150")
 	private String projectDescription;
-	private LocalDateTime createdTime;
+	private Date createdTime;
 	private String createdBy;
 	private String lastUpdateBy;
-	private LocalDateTime lastUpdateTime;
+	private Date lastUpdateTime;
 	private List<String> userIds;
 	private List<Task> tasks;
 }

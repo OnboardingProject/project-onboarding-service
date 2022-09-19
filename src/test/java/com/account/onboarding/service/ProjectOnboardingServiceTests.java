@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +90,7 @@ public class ProjectOnboardingServiceTests {
 		task = new Task(1, "Seat allocation", "User needs a chair", designation);
 		tasks.add(task);
 
-		LocalDateTime date = LocalDateTime.now();
+		Date date = new Date();
 
 		project = new Project("P_001", "Employee", "Employee allocation", date, "Admin", "Admin", date, userIds, tasks);
 		projects.add(project);

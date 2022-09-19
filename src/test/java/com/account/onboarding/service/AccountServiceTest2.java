@@ -224,6 +224,7 @@ public class AccountServiceTest2 {
 			when(accountRepository.findById(any())).thenReturn(accounts);
 			when(accountRepository.save(any())).thenReturn(accounts.get());
 			AboutCustomerResponseVO updatedAccount = accountServiceImpl.updateAboutCustomer(aboutCustomerRequestVO);
+			
 		} catch (Exception e) {
 			assertTrue(e instanceof AccountCustomerException);
 		}

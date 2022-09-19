@@ -24,6 +24,7 @@ import com.account.onboarding.request.ProjectTaskRequest;
 import com.account.onboarding.response.ResponsePayLoad;
 import com.account.onboarding.service.impl.ProjectTasksService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,6 +50,7 @@ public class ProjectTasksController {
 	 * 
 	 */
 	@GetMapping("/fetch-project-tasks/{projectId}")
+	@Operation(summary = "Get all tasks for a project", description = "This API is used to get all tasks of a project")
 	public ResponseEntity<ResponsePayLoad> getAllTaskByProject(@PathVariable String projectId) {
 		try {
 			log.info("Started project task fetch api method");
@@ -78,6 +80,7 @@ public class ProjectTasksController {
 	 * @Return: Project
 	 */
 	@PostMapping("/add-or-edit-task")
+	@Operation(summary = "Add/Edit a task inside a project", description = "This API is used to add/edit a task in a project")
 	public ResponseEntity<ResponsePayLoad> addOrEditTask(@RequestBody ProjectTaskRequest projectTaskRequest) {
 		log.info("In Add or Edit Task controller");
 		try {
@@ -105,6 +108,7 @@ public class ProjectTasksController {
 	 * 
 	 */
 	@PutMapping("/delete-task")
+	@Operation(summary = "Delete list of tasks in a project", description = "This API is used to delete list of tasks in a project")
 	public ResponseEntity<ResponsePayLoad> deleteTaskByProject(@Valid @RequestBody DeleteTaskRequest deleteTaskRequest) {
 		try {
 			log.info("Started project task delete api method");
