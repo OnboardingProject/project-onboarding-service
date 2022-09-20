@@ -40,7 +40,8 @@ public class OnboardingStatusController {
 
 	/**
 	 * @param projectId, userId
-	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException, Exception
+	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException,
+	 *         Exception
 	 * @description : Preview status report of a particular user for a project
 	 */
 	@GetMapping("/preview-report/{projectId}/{userId}")
@@ -51,7 +52,8 @@ public class OnboardingStatusController {
 		try {
 			log.info("In preview status report controller");
 
-			TaskPercentageReportResponse taskPercentageReport = onboardingStatusService.getPreviewStatusReport(projectId, userId);
+			TaskPercentageReportResponse taskPercentageReport = onboardingStatusService
+					.getPreviewStatusReport(projectId, userId);
 			List<Object> statusReportObject = new ArrayList<Object>();
 			statusReportObject.add(taskPercentageReport);
 
@@ -73,8 +75,10 @@ public class OnboardingStatusController {
 
 	/**
 	 * @param projectId, userId
-	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException, Exception
-	 * @description : Download status report in excel format for a particular user of a project
+	 * @return ResponseEntity<ResponsePayLoad>, ProjectOnboardingException,
+	 *         Exception
+	 * @description : Download status report in excel format for a particular user
+	 *              of a project
 	 */
 	@GetMapping("/export-report/{projectId}/{userId}")
 	@Operation(summary = "Download Status Report in Excel Format", description = "This API is used to download status report in excel format")
@@ -85,13 +89,17 @@ public class OnboardingStatusController {
 		try {
 			log.info("In export status report controller");
 
-			StatusReportResponse statusReport = onboardingStatusService.exportStatusReportInExcelFormat(projectId, userId);
+			StatusReportResponse statusReport = onboardingStatusService.exportStatusReportInExcelFormat(projectId,
+					userId);
 			List<Object> statusReportObject = new ArrayList<Object>();
 			statusReportObject.add(statusReport);
 
 			log.info("Status report in excel format is downloaded successfully in controller");
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(statusReportObject, ProjectOnboardingConstant.API_EXPORT_REPORT_SUCCESS + ProjectOnboardingConstant.getFileNameForExcelReport(projectId, userId), ""),
+					new ResponsePayLoad(statusReportObject,
+							ProjectOnboardingConstant.API_EXPORT_REPORT_SUCCESS
+									+ ProjectOnboardingConstant.getFileNameForExcelReport(projectId, userId),
+							""),
 					HttpStatus.OK);
 
 		} catch (ProjectOnboardingException ex) {

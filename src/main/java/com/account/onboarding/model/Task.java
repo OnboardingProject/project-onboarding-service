@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Task {
 	@Transient
-    public static final String SEQUENCE_NAME = "Task_Sequence";
+	public static final String SEQUENCE_NAME = "Task_Sequence";
 
 	private Integer taskId;
 	private String taskName;

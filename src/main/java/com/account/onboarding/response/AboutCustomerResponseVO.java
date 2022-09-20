@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class AboutCustomerResponseVO {
-	
 	private String customerName;
 	private String aboutCustomer;
 }

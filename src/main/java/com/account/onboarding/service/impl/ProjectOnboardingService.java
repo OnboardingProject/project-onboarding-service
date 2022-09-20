@@ -51,7 +51,7 @@ public class ProjectOnboardingService {
 	 * @description Fetch all the projects assigned to the particular user
 	 */
 
-	public List<ProjectDetailsResponse> getProjectsBasedOnUser(String userId) throws Exception{
+	public List<ProjectDetailsResponse> getProjectsBasedOnUser(String userId) throws Exception {
 
 		log.info("Inside the get Project list service");
 
@@ -120,7 +120,7 @@ public class ProjectOnboardingService {
 	 * @description Fetch all the resources assigned to the particular project
 	 */
 
-	public List<UserDetailsResponse> getUsersBasedOnProject(String projectId) throws Exception{
+	public List<UserDetailsResponse> getUsersBasedOnProject(String projectId) throws Exception {
 
 		log.info("Inside the get user list service");
 
@@ -193,7 +193,7 @@ public class ProjectOnboardingService {
 	 * @description : Show Task List associated with Project and Resource
 	 */
 
-	public List<TaskDetails> fetchTaskList(String projectId, String resourceId) throws Exception{
+	public List<TaskDetails> fetchTaskList(String projectId, String resourceId) throws Exception {
 		log.info("In fetch task list Service");
 		Query query = projectOnboardingUtil.createQuery(new Criteria().andOperator(
 				Criteria.where("userId").is(resourceId), Criteria.where("projectIds.projectId").is(projectId)));
@@ -217,7 +217,7 @@ public class ProjectOnboardingService {
 	 * @description : Save Task Status based on User and project Tasks.
 	 */
 
-	public List<TaskDetails> saveStatus(SaveTaskStatusRequest saveTaskStatusRequest) throws Exception{
+	public List<TaskDetails> saveStatus(SaveTaskStatusRequest saveTaskStatusRequest) throws Exception {
 		log.info("Method for saving the task status");
 		Query query = projectOnboardingUtil
 				.createQuery(new Criteria().andOperator(Criteria.where("userId").is(saveTaskStatusRequest.getUserId()),
@@ -258,9 +258,10 @@ public class ProjectOnboardingService {
 	 */
 	public List<Types> getAllTaskStatus() throws Exception {
 		log.info("Staring of fetch all task status");
-		Query query = projectOnboardingUtil.createQuery(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS));
+		Query query = projectOnboardingUtil
+				.createQuery(Criteria.where("typeName").is(ProjectOnboardingConstant.TASK_STATUS));
 		List<Types> taskStatusList = mongoTemplate.find(query, Types.class);
-		
+
 		if (!CollectionUtils.isEmpty(taskStatusList)) {
 			log.info("Display all the task status");
 			return taskStatusList;

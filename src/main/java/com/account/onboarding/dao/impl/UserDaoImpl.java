@@ -44,7 +44,6 @@ public class UserDaoImpl implements IUserDao {
 			hierarchy = user.getHierarchy();
 		}
 		return hierarchy;
-
 	}
 
 	/**
@@ -74,7 +73,6 @@ public class UserDaoImpl implements IUserDao {
 		query.addCriteria(Criteria.where("hierarchy").regex(userId));
 		List<User> users = mongoTemplate.find(query, User.class);
 		return users;
-
 	}
 
 	@Override
@@ -84,8 +82,6 @@ public class UserDaoImpl implements IUserDao {
 		query.addCriteria(Criteria.where("firstName").regex(firstName));
 		List<User> users = mongoTemplate.find(query, User.class);
 		return users;
-
-
 	}
 
 }

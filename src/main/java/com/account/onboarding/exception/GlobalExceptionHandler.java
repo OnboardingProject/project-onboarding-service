@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 		});
 		return new ResponseEntity<Map<String, String>>(response, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(UserAlreadyFoundException.class)
 	public ResponseEntity<ErrorInfo> userAlreadyFoundException(UserAlreadyFoundException ex) {
 		ErrorInfo errorInfo = new ErrorInfo();
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
 		ErrorInfo errorInfo = new ErrorInfo();
 		errorInfo.setErrorMessage(ex.getMsg());
 		errorInfo.setTime(LocalDateTime.now());
-		return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST); 
+		return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(EmailNotValidException.class)
@@ -95,4 +95,54 @@ public class GlobalExceptionHandler {
 		errorInfo.setTime(LocalDateTime.now());
 		return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	/**
+	 * Handles the javax validation exceptions like @NotBlank errors
+	 * 
+	 * @param ex
+	 * @return ErrorInfo response entity representation
+	 */
+	/*
+	 * @ExceptionHandler(MethodArgumentNotValidException.class) public
+	 * ResponseEntity<ErrorInfo> invalidException(MethodArgumentNotValidException
+	 * ex) { List<String> errors = ex.getFieldErrors().stream().map(e ->
+	 * e.getField() + ":" + e.getDefaultMessage()) .collect(Collectors.toList());
+	 * ErrorInfo errorInfo = new ErrorInfo(); errorInfo.setErrorMessage(errors);
+	 * errorInfo.setTime(LocalDateTime.now()); return new
+	 * ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.BAD_REQUEST); }
+	 */
+
+	/**
+	 * Handles the custom exception thrown for creating a project with same name
+	 * 
+	 * @param ex
+	 * @return ErrorInfo response entity representation
+	 */
+	@ExceptionHandler(NameAlreadyExistingException.class)
+	public ResponseEntity<ErrorInfo> nameException(NameAlreadyExistingException ex) {
+		ErrorInfo errorInfo = new ErrorInfo();
+		errorInfo.setErrorMessage(ex.getMsg());
+		errorInfo.setTime(LocalDateTime.now());
+		return new ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * Handles the exception for resource not found and returns 404
+	 * 
+	 * @param ex
+	 * @return ErrorInfo response entity representation
+	 */
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<ErrorInfo> NoResorceException(NoResourceFoundException ex) {
+		ErrorInfo errorInfo = new ErrorInfo();
+		errorInfo.setErrorMessage(ex.getMsg());
+		errorInfo.setTime(LocalDateTime.now());
+		return new ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(DataNotFoundException.class)
+	public ResponseEntity<String> productIdNotFoundException(DataNotFoundException exp) {
+		return new ResponseEntity<String>(exp.getErrorMessage(), HttpStatus.NOT_FOUND);
+	}
+
 }

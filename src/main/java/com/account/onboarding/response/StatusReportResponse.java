@@ -9,7 +9,8 @@ import lombok.Setter;
 
 /**
  * @author Vanisha Kulsu Mooppen
- * @description : Status Report structure for preview and export report functionalities.
+ * @description : Status Report structure for preview and export report
+ *              functionalities.
  * @date : 12 August 2022
  */
 

@@ -11,6 +11,5 @@ import com.account.onboarding.model.Account;
 public interface AccountRepository extends MongoRepository<Account, String> {
 
 	List<Account> findByCustomerNameContaining(String customerName);
-	
-}
 
+}

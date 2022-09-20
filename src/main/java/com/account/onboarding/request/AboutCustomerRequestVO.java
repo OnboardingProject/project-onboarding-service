@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class AboutCustomerRequestVO {
-	
+
 	private String accountId;
 	@NotEmpty
 	private String aboutCustomer;

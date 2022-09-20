@@ -12,6 +12,6 @@ import com.account.onboarding.model.Types;
  */
 
 @Repository
-public interface TypesRepository extends MongoRepository<Types, String>{
+public interface TypesRepository extends MongoRepository<Types, String> {
 
 }

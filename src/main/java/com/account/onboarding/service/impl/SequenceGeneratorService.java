@@ -27,14 +27,13 @@ public class SequenceGeneratorService {
 	@Autowired
 	private MongoOperations mongoOperations;
 
-    public int generateSequence(String seqName) {
-    	log.info("Generating the next id sequence");
-    	
-        DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
-                new Update().inc("seq",1), options().returnNew(true).upsert(true),
-                DatabaseSequence.class);
-        
-    	log.info("Returning generated sequence");
-        return !Objects.isNull(counter) ? counter.getSeq() : 1;
-    }
+	public int generateSequence(String seqName) {
+		log.info("Generating the next id sequence");
+
+		DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
+				new Update().inc("seq", 1), options().returnNew(true).upsert(true), DatabaseSequence.class);
+
+		log.info("Returning generated sequence");
+		return !Objects.isNull(counter) ? counter.getSeq() : 1;
+	}
 }

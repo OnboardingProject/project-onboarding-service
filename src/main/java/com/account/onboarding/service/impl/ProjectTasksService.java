@@ -202,24 +202,18 @@ public class ProjectTasksService {
 			userList = mongoTemplate.find(userDeleteQuery, User.class);
 
 			for (User user : userList) {
-				List<ProjectTaskDetails> projectTaskList = user.getProjectIds()
-														.stream()
-														.filter(s -> s.getProjectId().equals(deleteTaskRequest.getProjectId()))
-														.collect(Collectors.toList());
+				List<ProjectTaskDetails> projectTaskList = user.getProjectIds().stream()
+						.filter(s -> s.getProjectId().equals(deleteTaskRequest.getProjectId()))
+						.collect(Collectors.toList());
 
-				List<TaskDetails> tasksForUser = projectTaskList
-												.stream()
-												.map(m -> m.getTasks())
-												.flatMap(List::stream)
-												.collect(Collectors.toList());
+				List<TaskDetails> tasksForUser = projectTaskList.stream().map(m -> m.getTasks()).flatMap(List::stream)
+						.collect(Collectors.toList());
 
 				if (!CollectionUtils.isEmpty(tasksForUser)) {
-					List<TaskDetails> userTasksToBeDeleted = tasksForUser
-															.stream()
-															.filter(t -> (taskIdList.contains(t.getTaskId())))
-															.collect(Collectors.toList());
+					List<TaskDetails> userTasksToBeDeleted = tasksForUser.stream()
+							.filter(t -> (taskIdList.contains(t.getTaskId()))).collect(Collectors.toList());
 					tasksForUser.removeAll(userTasksToBeDeleted);
-					
+
 					Query userUpdateQuery = new Query(
 							Criteria.where("projectIds.projectId").is(deleteTaskRequest.getProjectId())
 									.andOperator(Criteria.where("userId").is(user.getUserId())));

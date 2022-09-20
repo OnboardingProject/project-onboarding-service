@@ -112,7 +112,8 @@ public class ProjectOnboardingController {
 			allTasks.addAll(projectOnboardingService.fetchTaskList(projectId, resourceId));
 
 			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(allTasks, ProjectOnboardingConstant.API_TASK_LIST_FETCH_SUCCESS, ""), HttpStatus.OK);
+					new ResponsePayLoad(allTasks, ProjectOnboardingConstant.API_TASK_LIST_FETCH_SUCCESS, ""),
+					HttpStatus.OK);
 
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.warn("Exception while fetching Task List");

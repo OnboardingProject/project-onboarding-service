@@ -81,7 +81,8 @@ public class OnboardingStatusService {
 
 				User existingUser = users.get(0);
 
-				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
+				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject,
+						existingUser);
 
 				log.info("Preview status report successfully returned in service");
 				return taskPercentageReport;
@@ -105,8 +106,8 @@ public class OnboardingStatusService {
 		List<Task> projectTasks = project.getTasks();
 
 		for (TaskDetails taskDetails : userTaskDetails) {
-			List<Task> taskWithGivenId = projectTasks.stream().filter(task -> task.getTaskId().equals(taskDetails.getTaskId()))
-					.collect(Collectors.toList());
+			List<Task> taskWithGivenId = projectTasks.stream()
+					.filter(task -> task.getTaskId().equals(taskDetails.getTaskId())).collect(Collectors.toList());
 			if (!CollectionUtils.isEmpty(taskWithGivenId)) {
 				TaskDetailsReportResponse taskDetailsReport = new TaskDetailsReportResponse();
 				taskDetailsReport.setTaskName(taskDetails.getTaskName());
@@ -149,10 +150,13 @@ public class OnboardingStatusService {
 
 				User existingUser = users.get(0);
 
-				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject, existingUser);
-				List<TaskDetailsReportResponse> taskDetailsListReport = createTaskDetailsReport(existingProject, existingUser);
+				TaskPercentageReportResponse taskPercentageReport = createTaskPercentageReport(existingProject,
+						existingUser);
+				List<TaskDetailsReportResponse> taskDetailsListReport = createTaskDetailsReport(existingProject,
+						existingUser);
 
-				StatusReportResponse statusReport = new StatusReportResponse(taskPercentageReport, taskDetailsListReport);
+				StatusReportResponse statusReport = new StatusReportResponse(taskPercentageReport,
+						taskDetailsListReport);
 
 				File file = new File(ProjectOnboardingConstant.getFileNameForExcelReport(projectId, userId));
 				file.getParentFile().mkdirs();
@@ -188,7 +192,7 @@ public class OnboardingStatusService {
 		sheet.setDefaultRowHeightInPoints(15);
 		log.info("Workbook with a sheet for Status Report is created");
 
-		int rowNumber = 0, noOfDataRows =  statusReport.getTaskDetailsReport().size();
+		int rowNumber = 0, noOfDataRows = statusReport.getTaskDetailsReport().size();
 
 		/* Setting font color and style */
 		Font font = workBook.createFont();
@@ -204,7 +208,7 @@ public class OnboardingStatusService {
 		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		style.setWrapText(true);
 		log.info("Style for sheet headers are set");
-		
+
 		CellStyle style1 = workBook.createCellStyle();
 		style1.setAlignment(HorizontalAlignment.CENTER);
 		style1.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
@@ -214,10 +218,10 @@ public class OnboardingStatusService {
 		HSSFRow rowhead = sheet.createRow((short) rowNumber++);
 		createCellsInARow(rowhead, headers, style);
 		log.info("First row created");
-		
-		sheet.addMergedRegion(new CellRangeAddress(0,1,0,0));
-		sheet.addMergedRegion(new CellRangeAddress(0,1,1,1));
-		sheet.addMergedRegion(new CellRangeAddress(0,1,2,2));
+
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 2, 2));
 		rowhead = sheet.createRow((short) rowNumber++);
 
 		if (sheet.getSheetName().equals(ProjectOnboardingConstant.EXPORT_REPORT_SHEET_NAME_STATUS_REPORT)) {
@@ -225,17 +229,17 @@ public class OnboardingStatusService {
 			createCellsInARow(rowhead, ProjectOnboardingConstant.EXPORT_REPORT_EXCEL_SUB_HEADERS_STATUS_REPORT, style);
 			noOfDataRows = 1;
 			log.info("A row created for sub headers");
-		} else 
+		} else
 			createCellsInARow(rowhead, new ArrayList<String>(), style);
-		
+
 		Map<Integer, List<String>> exportReportExcelData = getListOfExcelData(statusReport, sheetName);
-		for(int i = 1; i <= noOfDataRows; i++) {
+		for (int i = 1; i <= noOfDataRows; i++) {
 			rowhead = sheet.createRow((short) rowNumber++);
-			
+
 			createCellsInARow(rowhead, exportReportExcelData.get(i), style1);
 			log.info("Row with values created");
 		}
-		
+
 	}
 
 	/**
@@ -293,7 +297,8 @@ public class OnboardingStatusService {
 		if (projectTaskDetails.size() > 0 && projectTaskDetails.get(0).getTasks().size() > 0) {
 			long noOfTasks = projectTaskDetails.get(0).getTasks().stream().count();
 			int sumOfPercentage = projectTaskDetails.get(0).getTasks().stream()
-					.map(task -> ProjectOnboardingConstant.TASK_STATUS_PERCENTAGE.get(task.getTaskStatus().toLowerCase().replaceAll("[^A-Za-z]", "-")))
+					.map(task -> ProjectOnboardingConstant.TASK_STATUS_PERCENTAGE
+							.get(task.getTaskStatus().toLowerCase().replaceAll("[^A-Za-z]", "-")))
 					.collect(Collectors.summingInt(Integer::intValue));
 
 			taskPercentage = (sumOfPercentage * 100 / (noOfTasks * 100));
@@ -341,7 +346,7 @@ public class OnboardingStatusService {
 		log.warn("User is not a project owner");
 		return "";
 	}
-	
+
 	/**
 	 * @param statusReport, sheetName
 	 * @return EXPORT_REPORT_EXCEL_DATA
@@ -350,13 +355,13 @@ public class OnboardingStatusService {
 	 */
 	public Map<Integer, List<String>> getListOfExcelData(StatusReportResponse statusReport, String sheetName) {
 		log.info("In method for getting list of excel data to print on excel");
-		
+
 		HashMap<Integer, List<String>> exportReportExcelData = new HashMap<Integer, List<String>>();
 		int rowNumber = 1;
 
 		if (sheetName.equals(ProjectOnboardingConstant.EXPORT_REPORT_SHEET_NAME_STATUS_REPORT)) {
 			log.info("Getting data for the first sheet in excel");
-			
+
 			List<String> rowData = new ArrayList<String>();
 			TaskPercentageReportResponse taskPercentageReport = statusReport.getTaskPercentageReport();
 			rowData.add(taskPercentageReport.getProjectName());

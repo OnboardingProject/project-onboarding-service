@@ -1,16 +1,17 @@
 package com.account.onboarding.exception;
 
 @SuppressWarnings("serial")
-public class UserAlreadyFoundException extends RuntimeException {
+public class NoResourceFoundException extends RuntimeException {
 
 	String msg;
 
-	public UserAlreadyFoundException(String msg) {
-		super();
+	public NoResourceFoundException(String msg) {
+		super(msg);
 		this.msg = msg;
 	}
 
 	public String getMsg() {
 		return msg;
 	}
+
 }

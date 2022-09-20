@@ -6,6 +6,7 @@ package com.account.onboarding.exception;
  * @author
  *
  */
+@SuppressWarnings("serial")
 public class UserUpdateException extends RuntimeException {
 
 	String msg;

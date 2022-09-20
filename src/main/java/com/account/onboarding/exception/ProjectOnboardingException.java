@@ -15,8 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectOnboardingException extends RuntimeException{
+public class ProjectOnboardingException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private String errorMessage;
 }
-

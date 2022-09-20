@@ -81,12 +81,13 @@
 				<version>0.8.6</version>
 				<configuration>
 					<excludes>
-						<exclude>com/project/onboarding/constants/*</exclude>
-						<exclude>com/project/onboarding/exception/*</exclude>
-						<exclude>com/project/onboarding/model/*</exclude>
-						<exclude>com/project/onboarding/request/*</exclude>
-						<exclude>com/project/onboarding/response/*</exclude>
-						<exclude>com/project/onboarding/**/*Tests.java</exclude>
+						<exclude>com/account/onboarding/constants/*</exclude>
+						<exclude>com/account/onboarding/exception/*</exclude>
+						<exclude>com/account/onboarding/model/*</exclude>
+						<exclude>com/account/onboarding/dao/*Dao.java*</exclude>
+						<exclude>com/account/onboarding/request/*</exclude>
+						<exclude>com/account/onboarding/response/*</exclude>
+						<exclude>com/account/onboarding/**/*Tests.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>

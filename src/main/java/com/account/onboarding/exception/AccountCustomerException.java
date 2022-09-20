@@ -11,12 +11,12 @@ import lombok.Getter;
  */
 
 @Getter
-public class AccountCustomerException extends RuntimeException{
+public class AccountCustomerException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private final String errorMessage;
 	private final HttpStatus httpStatus;
-	
+
 	public AccountCustomerException(String errorMessage, HttpStatus httpStatus) {
 		super();
 		this.errorMessage = errorMessage;

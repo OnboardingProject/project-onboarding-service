@@ -24,7 +24,7 @@ import lombok.Setter;
 public class DeleteTaskRequest {
 	@NotEmpty(message = "projectId is a mandatory field")
 	private String projectId;
-	
+
 	@NotEmpty(message = "No tasks selected for deletion")
 	private List<Integer> taskIdList;
 }

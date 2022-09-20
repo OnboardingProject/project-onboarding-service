@@ -223,7 +223,7 @@ public class AccountServiceTest2 {
 					LocalDateTime.of(2020, 3, 19, 1, 0, 8, 9), "testCreatedBy", null, "", "", null, "", null, null));
 			when(accountRepository.findById(any())).thenReturn(accounts);
 			when(accountRepository.save(any())).thenReturn(accounts.get());
-			AboutCustomerResponseVO updatedAccount = accountServiceImpl.updateAboutCustomer(aboutCustomerRequestVO);
+			accountServiceImpl.updateAboutCustomer(aboutCustomerRequestVO);
 			
 		} catch (Exception e) {
 			assertTrue(e instanceof AccountCustomerException);
@@ -236,7 +236,7 @@ public class AccountServiceTest2 {
 			AboutCustomerRequestVO aboutCustomerRequestVO = new AboutCustomerRequestVO("id", "testDescription",
 					"testUpdatedBy");
 
-			AboutCustomerResponseVO updatedAccount = accountServiceImpl.updateAboutCustomer(aboutCustomerRequestVO);
+			accountServiceImpl.updateAboutCustomer(aboutCustomerRequestVO);
 		} catch (Exception e) {
 			assertTrue(e instanceof AccountCustomerException);
 		}

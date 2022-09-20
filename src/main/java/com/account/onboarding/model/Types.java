@@ -21,6 +21,6 @@ import lombok.Setter;
 public class Types {
 	private String typeName;
 	private Integer typeId;
-    private String typeDesc;
-    private String permission;
+	private String typeDesc;
+	private String permission;
 }

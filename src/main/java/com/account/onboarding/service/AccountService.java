@@ -12,27 +12,26 @@ import com.account.onboarding.request.CustomerEngagementRequestVO;
 import com.account.onboarding.request.InitiativesVO;
 import com.account.onboarding.response.AboutCustomerResponseVO;
 
-
 public interface AccountService {
-	
+
 	public List<Account> getAllAccounts();
-	
+
 	public Account createAccount(AccountRequestVO account);
-	
+
 	public AboutCustomerResponseVO addAboutCustomer(AboutCustomerRequestVO aboutCustomerRequestVO);
-	
+
 	public AboutCustomerResponseVO viewAboutCustomer(String accountId);
-	
+
 	public AboutCustomerResponseVO updateAboutCustomer(AboutCustomerRequestVO aboutCustomerRequestVO);
-	
+
 	public List<CustomerEngagement> addCustomerEngagements(CustomerEngagementRequestVO customerEngagementRequestVO);
-	
+
 	public List<CustomerEngagement> viewCustomerEngagements(String accountId);
-	
+
 	public List<CustomerEngagement> updateCustomerEngagements(CustomerEngagementRequestVO customerEngagementRequestVO);
-	
+
 	public String updateOverview(AccountVO accountVo);
-	
+
 	public String viewAccountOverview(String accountId);
 
 	public List<AccountInitiative> saveInitiatives(InitiativesVO initiativesVO);
@@ -40,6 +39,5 @@ public interface AccountService {
 	public List<AccountInitiative> viewInitiatives(String accountId);
 
 	public List<AccountInitiative> updateInitiatives(InitiativesVO initiativesVO);
-
 
 }

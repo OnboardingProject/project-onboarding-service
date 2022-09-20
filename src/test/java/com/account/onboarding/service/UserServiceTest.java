@@ -11,12 +11,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.account.onboarding.dao.impl.UserDaoImpl;
 import com.account.onboarding.exception.RoleAlreadySameException;
@@ -34,6 +34,8 @@ import com.mongodb.MongoException;
  * @author 
  *
  */
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserServiceTest {
 
 	@InjectMocks
@@ -44,11 +46,6 @@ public class UserServiceTest {
 
 	@Mock
 	UserRepository userRepository;
-
-	@BeforeEach
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
 
 	/**
 	 * {@link UserServiceImpl#addUser(UserRequest)}

@@ -12,7 +12,7 @@ import com.account.onboarding.response.UserResponse;
 /**
  * This is the service interface of UserManagement
  * 
- * @author 
+ * @author
  *
  */
 public interface IUserService {

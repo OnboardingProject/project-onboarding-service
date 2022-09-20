@@ -140,7 +140,6 @@ public class UserController {
 		} else {
 			responseEntity = new ResponseEntity<>(errorText, HttpStatus.OK);
 		}
-
 		return responseEntity;
 	}
 }

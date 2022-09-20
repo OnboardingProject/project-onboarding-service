@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class AccountRequestVO {
-	
+
 	@Id
 	private String accountId;
 	@NotEmpty

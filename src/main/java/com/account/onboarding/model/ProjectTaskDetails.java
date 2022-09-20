@@ -9,7 +9,8 @@ import lombok.Setter;
 
 /**
  * @author Vanisha Kulsu Mooppen
- * @description : Structure for storing Project and it's Tasks details to the User entity.
+ * @description : Structure for storing Project and it's Tasks details to the
+ *              User entity.
  * @date : 08 August 2022
  */
 

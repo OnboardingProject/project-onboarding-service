@@ -73,9 +73,10 @@ public class ProjectTasksController {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
 	 * Description : API for Add/Edit task of a project
+	 * 
 	 * @Param : projectTaskRequest
 	 * @Return: Project
 	 */
@@ -88,8 +89,8 @@ public class ProjectTasksController {
 			newProject.add(projectTasksService.addOrEditTask(projectTaskRequest));
 
 			log.info("Task is added or edited successsfully");
-			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(newProject, "SucessFully Tasks Added", " "), HttpStatus.CREATED);
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(newProject, "SucessFully Tasks Added", " "),
+					HttpStatus.CREATED);
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.warn("Exception while add/edit task");
 			return new ResponseEntity<ResponsePayLoad>(
@@ -100,33 +101,35 @@ public class ProjectTasksController {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
 	 * Description : API for delete the task based on project
+	 * 
 	 * @Param : DeleteTaskRequest
 	 * @Return: List of Task object
 	 * 
 	 */
 	@PutMapping("/delete-task")
 	@Operation(summary = "Delete list of tasks in a project", description = "This API is used to delete list of tasks in a project")
-	public ResponseEntity<ResponsePayLoad> deleteTaskByProject(@Valid @RequestBody DeleteTaskRequest deleteTaskRequest) {
+	public ResponseEntity<ResponsePayLoad> deleteTaskByProject(
+			@Valid @RequestBody DeleteTaskRequest deleteTaskRequest) {
 		try {
 			log.info("Started project task delete api method");
 			List<Object> tasksList = new ArrayList<Object>();
 			tasksList.add(projectTasksService.deleteTask(deleteTaskRequest));
-			
+
 			log.info("Return the selected project task details");
-			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(tasksList, ProjectOnboardingConstant.API_DELETE_TASKS_SUCCESS,""),
+			return new ResponseEntity<ResponsePayLoad>(
+					new ResponsePayLoad(tasksList, ProjectOnboardingConstant.API_DELETE_TASKS_SUCCESS, ""),
 					HttpStatus.OK);
 		} catch (ProjectOnboardingException projectOnboardingException) {
 			log.error("Throw Exception");
 			return new ResponseEntity<ResponsePayLoad>(
 					new ResponsePayLoad(null, "", projectOnboardingException.getErrorMessage()), HttpStatus.CONFLICT);
-		}  catch(Exception exception) {
+		} catch (Exception exception) {
 			log.error("Deletion Failed");
-			return new ResponseEntity<ResponsePayLoad>(
-					new ResponsePayLoad(null, "",exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<ResponsePayLoad>(new ResponsePayLoad(null, "", exception.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
-

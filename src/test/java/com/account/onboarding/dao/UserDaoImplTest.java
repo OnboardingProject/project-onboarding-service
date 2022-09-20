@@ -5,11 +5,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,6 +24,7 @@ import com.account.onboarding.model.User;
  * @author 
  *
  */
+@ExtendWith(MockitoExtension.class)
 public class UserDaoImplTest {
 
 	@InjectMocks
@@ -31,11 +32,7 @@ public class UserDaoImplTest {
 
 	@Mock
 	private MongoTemplate mongoTemplate;
-
-	@BeforeEach
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
+	
 	/**
 	 * {@link UserDaoImpl#getRoleId(roleId)}
 	 * This method checks the test if the roleId is invalid
@@ -49,7 +46,7 @@ public class UserDaoImplTest {
 		Query query = new Query();
 		Integer role = null;
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("typeId").is(roleId)), Types.class)).thenReturn(types);
-		when(userDaoImpl.getRoleId(roleId)).thenReturn(role);
+		role = userDaoImpl.getRoleId(roleId);
 		assertEquals(role,types.getTypeId() );
 	}
 	/**
@@ -65,8 +62,8 @@ public class UserDaoImplTest {
 		Query query = new Query();
 		Integer role = null;
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("typeId").is(roleId)), Types.class)).thenReturn(types);
-		role=types.getTypeId();
-		when(userDaoImpl.getRoleId(roleId)).thenReturn(role);
+		role = types.getTypeId();
+		role = userDaoImpl.getRoleId(roleId);
 		assertEquals(role,types.getTypeId());
 	}
 	
@@ -83,7 +80,7 @@ public class UserDaoImplTest {
 		Query query = new Query();
 		Integer role = null;
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("typeId").is(roleId)), Types.class)).thenReturn(null);
-		when(userDaoImpl.getRoleId(roleId)).thenReturn(role);
+		role = userDaoImpl.getRoleId(roleId);
 		assertEquals(role,types.getTypeId() );
 	}
 	
@@ -101,7 +98,7 @@ public class UserDaoImplTest {
 		String createdBy="U2345";
 		String hierarchy=null;
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("accountName").is(accountName).and("userId").is(createdBy)),User.class)).thenReturn(user);
-		when(userDaoImpl.getUser(accountName,createdBy)).thenReturn(hierarchy);
+		hierarchy = userDaoImpl.getUser(accountName,createdBy);
 		assertEquals(hierarchy,user.getHierarchy());
 	}
 	/**
@@ -118,7 +115,7 @@ public class UserDaoImplTest {
 		String createdBy="U2345";
 		String hierarchy=null;
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("accountName").is(accountName).and("userId").is(createdBy)),User.class)).thenReturn(null);
-		when(userDaoImpl.getUser(accountName,createdBy)).thenReturn(hierarchy);
+		hierarchy = userDaoImpl.getUser(accountName,createdBy);
 		assertEquals(hierarchy,user.getHierarchy());
 	}
 	/**
@@ -135,7 +132,7 @@ public class UserDaoImplTest {
 		String createdBy="U2345";
 		String hierarchy=user.getHierarchy();
 		when(mongoTemplate.findOne(query.addCriteria(Criteria.where("accountName").is(accountName).and("userId").is(createdBy)),User.class)).thenReturn(user);
-		when(userDaoImpl.getUser(accountName,createdBy)).thenReturn(hierarchy);
+		hierarchy = userDaoImpl.getUser(accountName,createdBy);
 		assertEquals(hierarchy,user.getHierarchy());
 	}
 }

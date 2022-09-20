@@ -35,11 +35,12 @@ public class ProjectOnboardingUtil {
 	 */
 	public int getRoleIdOfProjectOwner() {
 		log.info("In method for getting role id of project owner");
-		
+
 		if (roleIdOfProjectOwner == 0) {
 			log.info("Role id for project owner is finding for the first time");
-			
-			Criteria criteria = new Criteria().andOperator(Criteria.where("typeName").is(ProjectOnboardingConstant.ROLE),
+
+			Criteria criteria = new Criteria().andOperator(
+					Criteria.where("typeName").is(ProjectOnboardingConstant.ROLE),
 					Criteria.where("typeDesc").is(ProjectOnboardingConstant.PROJECT_OWNER));
 			Query query = new Query();
 			query.addCriteria(criteria);
@@ -48,14 +49,14 @@ public class ProjectOnboardingUtil {
 			List<Types> roleType = mongoTemplate.find(query, Types.class);
 
 			log.info("Role id for project owner is set to the variable");
-			if(roleType.size() > 0)
-				roleIdOfProjectOwner =  roleType.get(0).getTypeId();
+			if (roleType.size() > 0)
+				roleIdOfProjectOwner = roleType.get(0).getTypeId();
 		}
-		
+
 		log.info("Role id for project owner is returned from the method");
 		return roleIdOfProjectOwner;
 	}
-	
+
 	/**
 	 * @param criteria
 	 * @return query, created query with given criteria
@@ -70,5 +71,5 @@ public class ProjectOnboardingUtil {
 		log.info("Returning query");
 		return query;
 	}
-	
+
 }

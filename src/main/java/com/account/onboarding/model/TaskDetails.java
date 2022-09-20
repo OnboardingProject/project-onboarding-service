@@ -7,7 +7,8 @@ import lombok.Setter;
 
 /**
  * @author Vanisha Kulsu Mooppen
- * @description : Structure of the Task details of a project to store in user entity.
+ * @description : Structure of the Task details of a project to store in user
+ *              entity.
  * @date : 08 August 2022
  */
 

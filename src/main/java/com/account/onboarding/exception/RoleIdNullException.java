@@ -7,6 +7,7 @@ package com.account.onboarding.exception;
  * @author
  *
  */
+@SuppressWarnings("serial")
 public class RoleIdNullException extends RuntimeException {
 
 	String msg;

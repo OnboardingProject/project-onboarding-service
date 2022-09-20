@@ -7,7 +7,8 @@ import lombok.Setter;
 
 /**
  * @author Vanisha Kulsu Mooppen
- * @description : Structure for storing project task percentage report for preview and export report.
+ * @description : Structure for storing project task percentage report for
+ *              preview and export report.
  * @date : 23 August 2022
  */
 

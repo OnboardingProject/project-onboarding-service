@@ -7,6 +7,7 @@ package com.account.onboarding.exception;
  * @author
  *
  */
+@SuppressWarnings("serial")
 public class EmailNotValidException extends RuntimeException {
 
 	String msg;
